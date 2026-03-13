@@ -1,7 +1,7 @@
 import { streamText, generateText, ModelMessage, stepCountIs } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { buildSystemPrompt } from './prompts/system'
-import { BusinessContext, formatContextForPrompt } from './context-builder'
+import { BusinessContext, ClientContext, formatContextForPrompt, formatClientContextForPrompt } from './context-builder'
 import { getCustomerTools, getOwnerTools } from './tools'
 import { checkPermission } from './permission-gate'
 import { SupabaseClient } from '@supabase/supabase-js'
@@ -12,6 +12,8 @@ export interface AgentConfig {
   mode: 'customer' | 'owner'
   context: BusinessContext
   supabase: SupabaseClient
+  clientId?: string
+  clientContext?: ClientContext | null
 }
 
 export async function runAgentStream(
@@ -29,14 +31,19 @@ export async function runAgentStream(
 
   const contextBlock = formatContextForPrompt(config.context)
 
+  let clientBlock = ''
+  if (config.clientContext) {
+    clientBlock = `\n\n--- Customer Context ---\n${formatClientContextForPrompt(config.clientContext)}`
+  }
+
   const tools =
     config.mode === 'owner'
       ? getOwnerTools(config.context, config.supabase, config.tenantId, config.conversationId)
-      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId)
+      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId, config.clientId)
 
   const result = streamText({
     model: anthropic('claude-sonnet-4-20250514'),
-    system: `${systemPrompt}\n\n--- Business Information ---\n${contextBlock}`,
+    system: `${systemPrompt}\n\n--- Business Information ---\n${contextBlock}${clientBlock}`,
     messages,
     tools,
     stopWhen: stepCountIs(5),
@@ -81,14 +88,19 @@ export async function runAgentSync(
 
   const contextBlock = formatContextForPrompt(config.context)
 
+  let clientBlock = ''
+  if (config.clientContext) {
+    clientBlock = `\n\n--- Customer Context ---\n${formatClientContextForPrompt(config.clientContext)}`
+  }
+
   const tools =
     config.mode === 'owner'
       ? getOwnerTools(config.context, config.supabase, config.tenantId, config.conversationId)
-      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId)
+      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId, config.clientId)
 
   const result = await generateText({
     model: anthropic('claude-sonnet-4-20250514'),
-    system: `${systemPrompt}\n\n--- Business Information ---\n${contextBlock}`,
+    system: `${systemPrompt}\n\n--- Business Information ---\n${contextBlock}${clientBlock}`,
     messages,
     tools,
     stopWhen: stepCountIs(5),

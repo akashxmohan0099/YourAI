@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { buildBusinessContext } from '@/lib/ai/context-builder'
+import { buildBusinessContext, buildClientContext } from '@/lib/ai/context-builder'
 import { runAgentStream } from '@/lib/ai/agent'
 import { type ModelMessage, convertToModelMessages, createUIMessageStreamResponse } from 'ai'
 
@@ -44,6 +44,26 @@ export async function POST(request: Request) {
       convId = conv?.id
     }
 
+    // Resolve or create client for this conversation
+    let clientId: string | undefined
+    let clientContext = null
+
+    // Check if conversation already has a client
+    if (convId) {
+      const { data: conv } = await supabase
+        .from('conversations')
+        .select('client_id')
+        .eq('id', convId)
+        .single()
+
+      clientId = conv?.client_id || undefined
+    }
+
+    // Build client context if we have a client
+    if (clientId) {
+      clientContext = await buildClientContext(supabase, tenantId, clientId)
+    }
+
     // Save user message
     const lastMessage = messages[messages.length - 1]
     if (lastMessage?.role === 'user') {
@@ -78,6 +98,8 @@ export async function POST(request: Request) {
         mode: 'customer',
         context,
         supabase,
+        clientId,
+        clientContext,
       }
     )
 

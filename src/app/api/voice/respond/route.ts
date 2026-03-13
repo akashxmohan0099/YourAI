@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { buildBusinessContext } from '@/lib/ai/context-builder'
+import { buildBusinessContext, buildClientContext } from '@/lib/ai/context-builder'
 import { runAgentSync } from '@/lib/ai/agent'
 import { normalizeIncomingMessage, resolveTenantFromChannel } from '@/lib/channels/normalizer'
 import type { VapiServerMessage, VapiServerResponse } from '@/lib/vapi/types'
@@ -142,6 +142,11 @@ async function handleVoiceInput(body: VapiServerMessage): Promise<NextResponse> 
   // Build context and get conversation history
   const context = await buildBusinessContext(supabase, tenantId)
 
+  // Build client context for personalized responses
+  const clientContext = normalized.clientId
+    ? await buildClientContext(supabase, tenantId, normalized.clientId)
+    : null
+
   const { data: prevMessages } = await supabase
     .from('messages')
     .select('role, content')
@@ -162,6 +167,8 @@ async function handleVoiceInput(body: VapiServerMessage): Promise<NextResponse> 
     mode,
     context,
     supabase,
+    clientId: normalized.clientId || undefined,
+    clientContext,
   })
 
   // Save assistant response

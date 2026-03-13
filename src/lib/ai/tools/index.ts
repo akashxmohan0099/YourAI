@@ -31,6 +31,12 @@ export function getCustomerTools(
     checkAvailability: checkAvailabilityTool(context),
   }
 
+  if (supabase && tenantId) {
+    tools.createAppointment = createAppointmentTool(context, supabase, tenantId)
+    tools.rescheduleAppointment = rescheduleAppointmentTool(supabase, tenantId)
+    tools.cancelAppointment = cancelAppointmentTool(supabase, tenantId)
+  }
+
   if (supabase && tenantId && conversationId) {
     tools.requestApproval = requestApprovalTool(supabase, tenantId, conversationId, clientId)
   }
