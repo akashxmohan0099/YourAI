@@ -19,7 +19,6 @@ import {
   Receipt,
   Target,
   Megaphone,
-  Sparkles,
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -77,24 +76,19 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
   const sidebarContent = (
     <>
       {/* Brand */}
-      <div className="flex items-center gap-3 px-5 py-5">
-        <div className="w-9 h-9 bg-violet-600 rounded-xl flex items-center justify-center shadow-sm">
-          <Sparkles className="w-5 h-5 text-white" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-lg font-semibold text-violet-700 tracking-tight">YourAI</p>
-          <p className="text-sm text-stone-400 truncate leading-none">{tenantName}</p>
-        </div>
+      <div className="px-5 pt-6 pb-5">
+        <p className="text-lg font-semibold text-zinc-900 tracking-tight">YourAI</p>
+        <p className="text-[13px] text-zinc-500 truncate mt-0.5">{tenantName}</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 overflow-y-auto">
+      <nav className="flex-1 px-3 py-1 overflow-y-auto">
         {navSections.map((section) => (
-          <div key={section.label} className="mb-4">
-            <p className="px-3 mb-1.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+          <div key={section.label} className="mb-5">
+            <p className="px-3 mb-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-widest">
               {section.label}
             </p>
-            <div className="space-y-0.5">
+            <div className="space-y-px">
               {section.items.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
                 return (
@@ -103,13 +97,18 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
+                      'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-100',
                       isActive
-                        ? 'bg-violet-50 text-violet-700 border-l-2 border-violet-600'
-                        : 'text-stone-600 hover:bg-violet-50 hover:text-stone-800 active:bg-violet-100'
+                        ? 'bg-indigo-50 text-indigo-600'
+                        : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                     )}
                   >
-                    <item.icon className={cn('w-5 h-5 shrink-0', isActive ? 'text-violet-600' : 'text-stone-400')} />
+                    <item.icon
+                      className={cn(
+                        'w-[18px] h-[18px] shrink-0',
+                        isActive ? 'text-indigo-600' : 'text-zinc-400'
+                      )}
+                    />
                     {item.name}
                   </Link>
                 )
@@ -120,13 +119,13 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
       </nav>
 
       {/* Bottom section */}
-      <div className="px-3 py-4 border-t border-stone-200">
+      <div className="px-3 py-4 border-t border-zinc-200">
         <Link
           href={`/chat/${tenantSlug}`}
           target="_blank"
-          className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-stone-500 hover:bg-violet-50 hover:text-violet-700 transition-all duration-150"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700 transition-colors duration-100"
         >
-          <ExternalLink className="w-5 h-5" />
+          <ExternalLink className="w-[18px] h-[18px]" />
           Preview chat widget
         </Link>
       </div>
@@ -138,15 +137,15 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-xl shadow-md border border-stone-200"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg border border-zinc-200 shadow-sm"
       >
-        {mobileOpen ? <X className="w-5 h-5 text-stone-700" /> : <Menu className="w-5 h-5 text-stone-700" />}
+        {mobileOpen ? <X className="w-5 h-5 text-zinc-700" /> : <Menu className="w-5 h-5 text-zinc-700" />}
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-30"
+          className="lg:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-30 transition-opacity duration-200"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -154,7 +153,7 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-stone-200 flex flex-col transition-transform duration-200 lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 w-[260px] bg-white border-r border-zinc-200 flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >

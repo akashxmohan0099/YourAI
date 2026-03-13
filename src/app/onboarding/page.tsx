@@ -7,7 +7,7 @@ import { BasicInfoStep } from '@/components/onboarding/basic-info-step'
 import { FeaturesStep } from '@/components/onboarding/features-step'
 import { TellAiStep } from '@/components/onboarding/tell-ai-step'
 import { SummaryStep } from '@/components/onboarding/summary-step'
-import { Check, Sparkles } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { BusinessTypeTemplate, FeatureKey } from '@/lib/onboarding/business-type-templates'
 import { getTemplateById } from '@/lib/onboarding/business-type-templates'
@@ -95,52 +95,61 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-6 w-6 border-2 border-zinc-200 border-t-indigo-600" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-white">
+      {/* Top bar */}
+      <div className="border-b border-zinc-200">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <span className="text-lg font-semibold text-zinc-900 tracking-tight">YourAI</span>
+          <span className="text-sm text-zinc-400">Step {currentStep} of {STEPS.length}</span>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-100 mb-4">
-            <Sparkles className="w-7 h-7 text-violet-600" />
-          </div>
-          <h1 className="text-2xl font-semibold text-stone-900 mb-2">
-            Let&apos;s set up your AI assistant
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
+            Set up your business
           </h1>
-          <p className="text-stone-500 text-lg">
-            A few quick steps and your business gets a 24/7 AI team member
+          <p className="text-zinc-500 mt-1">
+            Configure your AI assistant in a few quick steps.
           </p>
         </div>
 
         {/* Step indicator */}
-        <div className="flex items-center justify-center mb-10">
+        <div className="flex items-start justify-between mb-10">
           {STEPS.map((step, index) => (
-            <div key={step.id} className="flex items-center">
+            <div key={step.id} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-200',
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors',
                     currentStep > step.id
-                      ? 'bg-violet-600 text-white shadow-md shadow-violet-200'
+                      ? 'bg-indigo-600 text-white'
                       : currentStep === step.id
-                      ? 'bg-violet-600 text-white shadow-md shadow-violet-200 ring-4 ring-violet-100'
-                      : 'bg-stone-200 text-stone-500'
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-zinc-100 text-zinc-400 border border-zinc-200'
                   )}
                 >
                   {currentStep > step.id ? (
-                    <Check className="w-5 h-5" />
+                    <Check className="w-4 h-4" />
                   ) : (
                     step.id
                   )}
                 </div>
                 <span className={cn(
-                  'text-xs mt-2 hidden sm:block font-medium',
-                  currentStep >= step.id ? 'text-violet-600' : 'text-stone-400'
+                  'text-xs mt-2 font-medium hidden sm:block',
+                  currentStep === step.id
+                    ? 'text-indigo-600'
+                    : currentStep > step.id
+                    ? 'text-zinc-700'
+                    : 'text-zinc-400'
                 )}>
                   {step.name}
                 </span>
@@ -148,8 +157,8 @@ export default function OnboardingPage() {
               {index < STEPS.length - 1 && (
                 <div
                   className={cn(
-                    'w-16 sm:w-24 h-1 mx-2 rounded-full transition-colors duration-200',
-                    currentStep > step.id ? 'bg-violet-600' : 'bg-stone-200'
+                    'flex-1 h-px mx-3 mt-4 sm:mt-4 transition-colors',
+                    currentStep > step.id ? 'bg-indigo-600' : 'bg-zinc-200'
                   )}
                 />
               )}
@@ -158,7 +167,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Step content */}
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
+        <div className="bg-white border border-zinc-200 rounded-lg p-6 sm:p-8">
           {currentStep === 1 && tenantId && (
             <BasicInfoStep
               tenantId={tenantId}
@@ -196,8 +205,8 @@ export default function OnboardingPage() {
           )}
         </div>
 
-        <p className="text-center text-sm text-stone-400 mt-6">
-          You can always change these settings later
+        <p className="text-center text-sm text-zinc-400 mt-6">
+          You can change these later in Settings.
         </p>
       </div>
     </div>

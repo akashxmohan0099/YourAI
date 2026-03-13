@@ -20,18 +20,21 @@ export function DashboardHeader({ displayName, role }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-stone-200 px-8 py-3">
+    <header className="sticky top-0 z-20 bg-white border-b border-zinc-200 px-6 py-2.5">
       <div className="flex items-center justify-between">
         <div className="lg:hidden w-10" />
         <div className="flex-1" />
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-medium text-stone-900">{displayName}</p>
-            <p className="text-sm text-stone-500 capitalize">{role}</p>
+        <div className="flex items-center gap-3">
+          <div className="text-right mr-1">
+            <p className="text-sm font-medium text-zinc-900 leading-tight">{displayName}</p>
+            <span className="inline-block mt-0.5 text-[11px] font-medium text-zinc-500 capitalize bg-zinc-100 px-2 py-0.5 rounded-full">
+              {role}
+            </span>
           </div>
+          <div className="w-px h-6 bg-zinc-200" />
           <button
             onClick={handleSignOut}
-            className="p-2 text-stone-400 hover:text-stone-600 rounded-xl hover:bg-stone-100 transition-colors"
+            className="p-2 text-zinc-400 hover:text-zinc-600 rounded-lg hover:bg-zinc-100 transition-colors duration-100"
             title="Sign out"
           >
             <LogOut className="w-4 h-4" />

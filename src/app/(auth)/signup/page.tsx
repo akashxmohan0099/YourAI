@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -70,28 +69,30 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl border border-stone-200 shadow-sm">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-violet-600 rounded-xl flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-          </div>
-          <h1 className="text-2xl font-semibold text-stone-900">Get started with YourAI</h1>
-          <p className="mt-2 text-base text-stone-500">Set up your AI assistant in minutes</p>
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <span className="text-lg font-semibold tracking-tight text-zinc-900">
+            YourAI
+          </span>
+          <h1 className="mt-6 text-xl font-semibold text-zinc-900">
+            Create your account
+          </h1>
+          <p className="mt-1.5 text-sm text-zinc-500">
+            Get started in a few minutes.
+          </p>
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-5">
+        <form onSubmit={handleSignup} className="space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2.5 rounded-lg text-sm">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="businessName" className="block text-sm font-medium text-stone-600 mb-1.5">
-              Business Name
+            <label htmlFor="businessName" className="block text-sm font-medium text-zinc-700 mb-1.5">
+              Business name
             </label>
             <input
               id="businessName"
@@ -99,13 +100,13 @@ export default function SignupPage() {
               required
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              className="block w-full rounded-xl border border-stone-300 px-4 py-2.5 text-base shadow-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-stone-400"
+              className="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 placeholder:text-zinc-400"
               placeholder="Acme Services"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-stone-600 mb-1.5">
+            <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-1.5">
               Email
             </label>
             <input
@@ -114,13 +115,13 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full rounded-xl border border-stone-300 px-4 py-2.5 text-base shadow-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-stone-400"
+              className="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 placeholder:text-zinc-400"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-stone-600 mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-zinc-700 mb-1.5">
               Password
             </label>
             <input
@@ -130,7 +131,7 @@ export default function SignupPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-xl border border-stone-300 px-4 py-2.5 text-base shadow-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 placeholder:text-stone-400"
+              className="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600 placeholder:text-zinc-400"
               placeholder="At least 8 characters"
             />
           </div>
@@ -138,15 +139,15 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2.5 px-5 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full py-2 px-4 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-stone-500">
+        <p className="mt-6 text-center text-sm text-zinc-500">
           Already have an account?{' '}
-          <Link href="/login" className="text-violet-600 hover:text-violet-500 font-medium">
+          <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
             Sign in
           </Link>
         </p>
