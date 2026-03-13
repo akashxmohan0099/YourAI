@@ -1,6 +1,6 @@
 import { requireTenant } from '@/lib/auth/guards'
 import { createClient } from '@/lib/supabase/server'
-import { FileText, Send, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { FileText, Send, CheckCircle, XCircle, Clock, Download } from 'lucide-react'
 
 export default async function QuotesPage() {
   const { tenantId } = await requireTenant()
@@ -71,16 +71,17 @@ export default async function QuotesPage() {
           </div>
         ) : (
           <div className="divide-y divide-stone-100">
-            <div className="grid grid-cols-6 gap-4 px-6 py-3.5 text-xs font-medium text-stone-500 uppercase tracking-wide bg-stone-50 rounded-t-2xl">
+            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-3.5 text-xs font-medium text-stone-500 uppercase tracking-wide bg-stone-50 rounded-t-2xl">
               <span>Quote #</span>
               <span>Client</span>
               <span>Total</span>
               <span>Status</span>
               <span>Valid Until</span>
               <span>Created</span>
+              <span className="w-8"></span>
             </div>
             {quotes.map((q: any) => (
-              <div key={q.id} className="grid grid-cols-6 gap-4 px-6 py-4 items-center hover:bg-stone-50 transition-colors">
+              <div key={q.id} className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_auto] gap-4 px-6 py-4 items-center hover:bg-stone-50 transition-colors">
                 <span className="text-sm font-medium text-stone-900">{q.quote_number}</span>
                 <span className="text-sm text-stone-700">{q.clients?.name || 'N/A'}</span>
                 <span className="text-sm font-semibold text-stone-900">
@@ -97,6 +98,15 @@ export default async function QuotesPage() {
                 <span className="text-sm text-stone-500">
                   {new Date(q.created_at).toLocaleDateString()}
                 </span>
+                <a
+                  href={`/api/quotes/${q.id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Download PDF"
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-stone-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                </a>
               </div>
             ))}
           </div>
