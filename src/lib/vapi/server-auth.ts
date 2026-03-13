@@ -10,13 +10,14 @@ export function getVapiWebhookSecret(): string | null {
 
 export function buildVapiServerConfig(url: string): VapiServerConfig {
   const secret = getVapiWebhookSecret()
+  const cleanUrl = url.trim()
 
   if (!secret) {
-    return { url }
+    return { url: cleanUrl }
   }
 
   return {
-    url,
+    url: cleanUrl,
     headers: {
       'X-Vapi-Secret': secret,
     },

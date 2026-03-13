@@ -479,7 +479,7 @@ async function handleAssistantRequest(body: VapiServerMessage): Promise<NextResp
   })
 
   const toolDefs = ownerCall ? getVapiOwnerToolDefs() : getVapiCustomerToolDefs()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim()
   const serverFields = buildVapiServerFields(`${appUrl}/api/voice/respond`)
 
   return NextResponse.json({
@@ -724,7 +724,7 @@ async function handleTransferDestination(body: VapiServerMessage): Promise<NextR
 
   const context = await buildBusinessContext(supabase, tenantId)
   const contextBlock = formatContextForPrompt(context)
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim()
   const serverFields = buildVapiServerFields(`${appUrl}/api/voice/respond`)
 
   const systemPrompt = `You are the ${destinationName} for ${context.businessName}. You are handling a phone call that was transferred to you.

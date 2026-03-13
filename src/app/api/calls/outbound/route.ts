@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     // Create outbound call via Vapi
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim()
     if (!getVapiWebhookSecret()) {
       return NextResponse.json(
         { error: 'VAPI_WEBHOOK_SECRET must be configured before placing outbound calls.' },
