@@ -11,7 +11,7 @@ export default async function ConversationsPage() {
     .select('*, clients(name, email, phone)')
     .eq('tenant_id', tenantId)
     .order('updated_at', { ascending: false })
-    .limit(50)
+    .limit(100)
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">

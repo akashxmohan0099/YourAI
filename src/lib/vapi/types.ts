@@ -18,10 +18,27 @@ export interface VapiServerMessage {
     endedReason?: string
     recordingUrl?: string
     summary?: string
+    /** Full conversation transcript from end-of-call report */
     messages?: Array<{
       role: string
       message: string
+      time?: number
+      secondsFromStart?: number
     }>
+    /** Artifact data from end-of-call report */
+    artifact?: {
+      messages?: Array<{
+        role: string
+        message: string
+        time?: number
+        secondsFromStart?: number
+      }>
+      recordingUrl?: string
+      stereoRecordingUrl?: string
+      transcript?: string
+    }
+    /** Call duration in seconds */
+    durationSeconds?: number
     /** Present on transfer-destination-request messages */
     destination?: {
       type?: string
@@ -59,5 +76,9 @@ export interface VapiServerResponse {
       number: string
       message?: string
     }
+    toolResults?: Array<{
+      toolCallId: string
+      result: string
+    }>
   }
 }

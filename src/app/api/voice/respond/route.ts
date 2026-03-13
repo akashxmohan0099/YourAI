@@ -395,6 +395,26 @@ async function handleEndOfCall(body: VapiServerMessage) {
   const tenantId = await resolveTenantFromChannel('voice', body.message)
   if (!tenantId) return
 
+  // Extract transcript from artifact or messages
+  const artifactMessages = body.message?.artifact?.messages || body.message?.messages || []
+  const transcript = artifactMessages
+    .filter((m) => m.role === 'user' || m.role === 'assistant' || m.role === 'bot')
+    .map((m) => `${m.role === 'user' ? 'Customer' : 'AI'}: ${m.message}`)
+    .join('\n')
+
+  const recordingUrl = body.message?.artifact?.recordingUrl || body.message?.recordingUrl
+  const summary = body.message?.summary
+  const durationSeconds = body.message?.durationSeconds
+  const endedReason = body.message?.endedReason
+
+  // Calculate duration from call timestamps if not provided
+  let duration = durationSeconds
+  if (!duration && body.message?.call?.createdAt && body.message?.call?.endedAt) {
+    duration = Math.round(
+      (new Date(body.message.call.endedAt).getTime() - new Date(body.message.call.createdAt).getTime()) / 1000
+    )
+  }
+
   // Find and close the conversation
   const { data: conv } = await supabase
     .from('conversations')
@@ -411,9 +431,12 @@ async function handleEndOfCall(body: VapiServerMessage) {
         ended_at: new Date().toISOString(),
         metadata: {
           callId,
-          endedReason: body.message?.endedReason,
-          summary: body.message?.summary,
-          recordingUrl: body.message?.recordingUrl,
+          endedReason,
+          summary,
+          transcript,
+          recordingUrl,
+          durationSeconds: duration,
+          callerNumber: body.message?.call?.customer?.number,
         },
       })
       .eq('id', conv.id)
