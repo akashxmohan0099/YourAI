@@ -363,9 +363,9 @@ pre,
   padding: 1rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .dashboard-main {
-    padding: 1.5rem 1.75rem 2.5rem calc(248px + 1.75rem);
+    padding: 1.5rem 1.75rem 2.5rem calc(248px + 2rem);
   }
 }
 

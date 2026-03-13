@@ -18,7 +18,7 @@ export default async function DashboardLayout({
   return (
     <div className="dashboard-shell">
       <DashboardSidebar tenantName={tenant.name} tenantSlug={tenant.slug} />
-      <div className="lg:pl-64">
+      <div>
         <DashboardHeader displayName={profile.display_name || 'User'} role={profile.role} />
         <main className="dashboard-main">
           <div className="mx-auto max-w-[110rem]">{children}</div>
