@@ -15,6 +15,10 @@ import { addClientNoteTool } from './add-client-note'
 import { createQuoteTool } from './create-quote'
 import { createInvoiceTool } from './create-invoice'
 import { checkPaymentTool } from './check-payment'
+import { sendSmsTool } from './send-sms'
+import { sendEmailTool } from './send-email'
+import { sendQuoteTool } from './send-quote'
+import { sendInvoiceTool } from './send-invoice'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 /**
@@ -105,15 +109,26 @@ export function getOwnerTools(
   const tools: Record<string, any> = { ...customerTools }
 
   if (supabase && tenantId) {
+    // Scheduling
     tools.createAppointment = createAppointmentTool(context, supabase, tenantId)
     tools.rescheduleAppointment = rescheduleAppointmentTool(supabase, tenantId)
     tools.cancelAppointment = cancelAppointmentTool(supabase, tenantId)
     tools.getSchedule = getScheduleTool(supabase, tenantId)
+
+    // CRM
     tools.searchClients = searchClientsTool(supabase, tenantId)
     tools.addClientNote = addClientNoteTool(supabase, tenantId)
+
+    // Billing
     tools.createQuote = createQuoteTool(supabase, tenantId)
     tools.createInvoice = createInvoiceTool(supabase, tenantId)
     tools.checkPayment = checkPaymentTool(supabase, tenantId)
+
+    // Sending — quotes, invoices, SMS, email
+    tools.sendQuote = sendQuoteTool(supabase, tenantId)
+    tools.sendInvoice = sendInvoiceTool(supabase, tenantId)
+    tools.sendSms = sendSmsTool(context, supabase, tenantId)
+    tools.sendEmail = sendEmailTool(supabase, tenantId)
   }
 
   if (supabase && tenantId && conversationId) {

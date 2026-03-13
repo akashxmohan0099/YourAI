@@ -81,7 +81,7 @@ export async function createInvoice(
           invoice: stripeInvoice.id,
           description: item.description,
           amount: item.totalCents,
-          currency: 'usd',
+          currency: 'aud',
         })
       }
 

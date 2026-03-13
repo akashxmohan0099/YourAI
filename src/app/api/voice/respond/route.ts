@@ -242,6 +242,141 @@ function getVapiOwnerToolDefs() {
         },
       },
     },
+    // Billing
+    {
+      type: 'function',
+      function: {
+        name: 'createQuote',
+        description: 'Create a quote/estimate for a client with line items',
+        parameters: {
+          type: 'object',
+          properties: {
+            clientName: { type: 'string', description: 'Name of the client' },
+            items: {
+              type: 'array',
+              description: 'Line items for the quote',
+              items: {
+                type: 'object',
+                properties: {
+                  description: { type: 'string' },
+                  quantity: { type: 'number' },
+                  unitPrice: { type: 'number', description: 'Price per unit in dollars' },
+                },
+                required: ['description', 'quantity', 'unitPrice'],
+              },
+            },
+            validDays: { type: 'number', description: 'Days the quote is valid (default 30)' },
+            notes: { type: 'string', description: 'Additional notes' },
+          },
+          required: ['clientName', 'items'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'sendQuote',
+        description: 'Send a previously created quote to the client via SMS, email, or both',
+        parameters: {
+          type: 'object',
+          properties: {
+            quoteNumber: { type: 'string', description: 'The quote number (e.g., Q-0001)' },
+            via: { type: 'string', enum: ['sms', 'email', 'both'], description: 'Delivery method' },
+          },
+          required: ['quoteNumber', 'via'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'createInvoice',
+        description: 'Create an invoice for a client with line items',
+        parameters: {
+          type: 'object',
+          properties: {
+            clientName: { type: 'string', description: 'Name of the client' },
+            items: {
+              type: 'array',
+              description: 'Line items for the invoice',
+              items: {
+                type: 'object',
+                properties: {
+                  description: { type: 'string' },
+                  quantity: { type: 'number' },
+                  unitPrice: { type: 'number', description: 'Price per unit in dollars' },
+                },
+                required: ['description', 'quantity', 'unitPrice'],
+              },
+            },
+            dueDays: { type: 'number', description: 'Days until due (default 30)' },
+            notes: { type: 'string', description: 'Additional notes' },
+          },
+          required: ['clientName', 'items'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'sendInvoice',
+        description: 'Send a previously created invoice. Sends via Stripe and optionally notifies by SMS/email.',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoiceNumber: { type: 'string', description: 'The invoice number (e.g., INV-0001)' },
+            notifyVia: { type: 'string', enum: ['sms', 'email', 'both', 'none'], description: 'How to notify the client (default: none, Stripe handles it)' },
+          },
+          required: ['invoiceNumber'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'checkPayment',
+        description: 'Check the payment status of an invoice',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoiceNumber: { type: 'string', description: 'The invoice number to check' },
+          },
+          required: ['invoiceNumber'],
+        },
+      },
+    },
+    // Communication
+    {
+      type: 'function',
+      function: {
+        name: 'sendSms',
+        description: 'Send a text message to a client',
+        parameters: {
+          type: 'object',
+          properties: {
+            clientName: { type: 'string', description: 'Name of the client to text' },
+            message: { type: 'string', description: 'The message to send' },
+          },
+          required: ['clientName', 'message'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'sendEmail',
+        description: 'Send an email to a client',
+        parameters: {
+          type: 'object',
+          properties: {
+            clientName: { type: 'string', description: 'Name of the client to email' },
+            subject: { type: 'string', description: 'Email subject line' },
+            body: { type: 'string', description: 'Email body text' },
+          },
+          required: ['clientName', 'subject', 'body'],
+        },
+      },
+    },
   ]
 }
 
