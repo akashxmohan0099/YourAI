@@ -31,8 +31,8 @@ export async function runAgentStream(
 
   const tools =
     config.mode === 'owner'
-      ? getOwnerTools(config.context)
-      : getCustomerTools(config.context)
+      ? getOwnerTools(config.context, config.supabase, config.tenantId, config.conversationId)
+      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId)
 
   const result = streamText({
     model: anthropic('claude-sonnet-4-20250514'),
@@ -83,8 +83,8 @@ export async function runAgentSync(
 
   const tools =
     config.mode === 'owner'
-      ? getOwnerTools(config.context)
-      : getCustomerTools(config.context)
+      ? getOwnerTools(config.context, config.supabase, config.tenantId, config.conversationId)
+      : getCustomerTools(config.context, config.supabase, config.tenantId, config.conversationId)
 
   const result = await generateText({
     model: anthropic('claude-sonnet-4-20250514'),

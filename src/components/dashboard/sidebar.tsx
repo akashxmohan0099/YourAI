@@ -5,6 +5,9 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   MessageSquare,
+  Users,
+  ShieldCheck,
+  Radio,
   Settings,
   ExternalLink,
   Menu,
@@ -21,6 +24,9 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Conversations', href: '/conversations', icon: MessageSquare },
+  { name: 'Clients', href: '/clients', icon: Users },
+  { name: 'Approvals', href: '/approvals', icon: ShieldCheck },
+  { name: 'Channels', href: '/channels', icon: Radio },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
