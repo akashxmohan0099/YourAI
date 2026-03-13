@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckCircle2, Loader2, Phone, PhoneCall, PhoneOff, X } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 interface OutboundCallModalProps {
   open: boolean
@@ -28,6 +28,24 @@ const PURPOSE_DESCRIPTIONS: Record<CallPurpose, string> = {
   review_request: 'Ask the client to leave a review.',
 }
 
+// Map Vapi call statuses to our UI statuses
+function mapVapiStatus(vapiStatus: string): CallStatus {
+  switch (vapiStatus) {
+    case 'queued':
+      return 'initiating'
+    case 'ringing':
+      return 'ringing'
+    case 'in-progress':
+      return 'in-progress'
+    case 'forwarding':
+      return 'in-progress'
+    case 'ended':
+      return 'completed'
+    default:
+      return 'in-progress'
+  }
+}
+
 export function OutboundCallModal({
   open,
   onClose,
@@ -40,6 +58,43 @@ export function OutboundCallModal({
   const [callStatus, setCallStatus] = useState<CallStatus>('idle')
   const [callId, setCallId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Poll Vapi for call status
+  const pollCallStatus = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/vapi/status?callId=${id}`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (data.callStatus) {
+        const mapped = mapVapiStatus(data.callStatus)
+        setCallStatus(mapped)
+        // Stop polling when call ends
+        if (mapped === 'completed' || mapped === 'error') {
+          if (pollRef.current) clearInterval(pollRef.current)
+        }
+      }
+    } catch {
+      // Silently continue polling
+    }
+  }, [])
+
+  // Start polling when we have a callId
+  useEffect(() => {
+    if (callId && callStatus !== 'idle' && callStatus !== 'completed' && callStatus !== 'error') {
+      pollRef.current = setInterval(() => pollCallStatus(callId), 3000)
+      return () => {
+        if (pollRef.current) clearInterval(pollRef.current)
+      }
+    }
+  }, [callId, callStatus, pollCallStatus])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [])
 
   const startCall = async () => {
     setCallStatus('initiating')
@@ -67,8 +122,6 @@ export function OutboundCallModal({
 
       setCallId(data.callId)
       setCallStatus('ringing')
-      setTimeout(() => setCallStatus('in-progress'), 3000)
-      setTimeout(() => setCallStatus('completed'), 60000)
     } catch {
       setCallStatus('error')
       setError('Failed to connect. Please try again.')

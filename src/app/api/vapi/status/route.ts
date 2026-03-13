@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getVapiClient } from '@/lib/vapi/client'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
     const {
@@ -22,6 +22,23 @@ export async function GET() {
 
     if (!profile || !['owner', 'admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    // If callId is provided, return call status (for outbound call polling)
+    const callId = request.nextUrl.searchParams.get('callId')
+    if (callId) {
+      try {
+        const vapi = getVapiClient()
+        const call = await vapi.getCall(callId)
+        return NextResponse.json({
+          callId: call.id,
+          callStatus: call.status,
+          endedReason: call.endedReason,
+          duration: call.duration,
+        })
+      } catch {
+        return NextResponse.json({ callStatus: 'unknown' })
+      }
     }
 
     const tenantId = profile.tenant_id
