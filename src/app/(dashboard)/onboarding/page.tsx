@@ -3,26 +3,28 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { BusinessInfoStep } from '@/components/onboarding/business-info-step'
-import { ServicesStep } from '@/components/onboarding/services-step'
-import { HoursStep } from '@/components/onboarding/hours-step'
-import { FaqsStep } from '@/components/onboarding/faqs-step'
-import { ToneStep } from '@/components/onboarding/tone-step'
+import { BasicInfoStep } from '@/components/onboarding/basic-info-step'
+import { FeaturesStep } from '@/components/onboarding/features-step'
+import { TellAiStep } from '@/components/onboarding/tell-ai-step'
+import { SummaryStep } from '@/components/onboarding/summary-step'
 import { Check, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { BusinessTypeTemplate, FeatureKey } from '@/lib/onboarding/business-type-templates'
+import { getTemplateById } from '@/lib/onboarding/business-type-templates'
 
 const STEPS = [
-  { id: 1, name: 'Business Info', description: 'Tell us about your business' },
-  { id: 2, name: 'Services', description: 'What you offer and pricing' },
-  { id: 3, name: 'Hours', description: 'When you\'re available' },
-  { id: 4, name: 'FAQs', description: 'Common customer questions' },
-  { id: 5, name: 'AI Tone', description: 'How your AI should sound' },
+  { id: 1, name: 'Basics', description: 'Tell us about your business' },
+  { id: 2, name: 'Features', description: 'What do you need?' },
+  { id: 3, name: 'Teach AI', description: 'Tell our AI about your business' },
+  { id: 4, name: 'Review', description: 'Review and launch' },
 ]
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedTemplate, setSelectedTemplate] = useState<BusinessTypeTemplate | null>(null)
+  const [selectedFeatures, setSelectedFeatures] = useState<FeatureKey[]>([])
   const router = useRouter()
   const supabase = createClient()
 
@@ -36,7 +38,7 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from('user_profiles')
-        .select('tenant_id, tenants(status)')
+        .select('tenant_id, tenants(status, business_type)')
         .eq('auth_user_id', user.id)
         .single()
 
@@ -50,6 +52,13 @@ export default function OnboardingPage() {
         return
       }
 
+      // Restore template if already selected
+      const businessType = (profile.tenants as any)?.business_type
+      if (businessType) {
+        const template = getTemplateById(businessType)
+        if (template) setSelectedTemplate(template)
+      }
+
       setTenantId(profile.tenant_id)
       setLoading(false)
     }
@@ -57,21 +66,21 @@ export default function OnboardingPage() {
   }, [router, supabase])
 
   const handleNext = () => {
-    if (currentStep < 5) {
-      setCurrentStep(currentStep + 1)
-    }
+    if (currentStep < 4) setCurrentStep(currentStep + 1)
   }
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-    }
+    if (currentStep > 1) setCurrentStep(currentStep - 1)
+  }
+
+  const handleTemplateSelect = (template: BusinessTypeTemplate) => {
+    setSelectedTemplate(template)
+    setSelectedFeatures(template.defaultFeatures)
   }
 
   const handleComplete = async () => {
     if (!tenantId) return
 
-    // Activate tenant
     const res = await fetch('/api/onboarding/complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -92,21 +101,19 @@ export default function OnboardingPage() {
     )
   }
 
-  const currentStepInfo = STEPS.find(s => s.id === currentStep)
-
   return (
     <div className="min-h-screen bg-stone-50">
-      <div className="max-w-3xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-100 mb-4">
             <Sparkles className="w-7 h-7 text-violet-600" />
           </div>
           <h1 className="text-2xl font-semibold text-stone-900 mb-2">
-            Welcome! Let&apos;s set up your AI assistant
+            Let&apos;s set up your AI assistant
           </h1>
           <p className="text-stone-500 text-lg">
-            Just a few quick steps and you&apos;ll be ready to go
+            A few quick steps and your business gets a 24/7 AI team member
           </p>
         </div>
 
@@ -141,7 +148,7 @@ export default function OnboardingPage() {
               {index < STEPS.length - 1 && (
                 <div
                   className={cn(
-                    'w-12 sm:w-20 h-1 mx-2 rounded-full transition-colors duration-200',
+                    'w-16 sm:w-24 h-1 mx-2 rounded-full transition-colors duration-200',
                     currentStep > step.id ? 'bg-violet-600' : 'bg-stone-200'
                   )}
                 />
@@ -150,48 +157,45 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        {/* Step progress text */}
-        <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-100 text-violet-700 text-sm font-medium">
-            Step {currentStep} of 5
-          </span>
-        </div>
-
         {/* Step content */}
         <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
-          {currentStepInfo && (
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-stone-900 mb-1">
-                {currentStepInfo.description}
-              </h2>
-              <p className="text-stone-500">
-                {currentStep === 1 && 'Share the basics so your AI knows who it represents.'}
-                {currentStep === 2 && 'List what you offer so your AI can answer questions and create quotes.'}
-                {currentStep === 3 && 'Set your working hours so your AI can schedule appointments correctly.'}
-                {currentStep === 4 && 'Add common questions so your AI can respond instantly.'}
-                {currentStep === 5 && 'Choose a personality that matches your brand.'}
-              </p>
-            </div>
-          )}
-
           {currentStep === 1 && tenantId && (
-            <BusinessInfoStep tenantId={tenantId} onNext={handleNext} />
+            <BasicInfoStep
+              tenantId={tenantId}
+              selectedTemplate={selectedTemplate}
+              onTemplateSelect={handleTemplateSelect}
+              onNext={handleNext}
+            />
           )}
           {currentStep === 2 && tenantId && (
-            <ServicesStep tenantId={tenantId} onNext={handleNext} onBack={handleBack} />
+            <FeaturesStep
+              tenantId={tenantId}
+              selectedFeatures={selectedFeatures}
+              onFeaturesChange={setSelectedFeatures}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
           )}
           {currentStep === 3 && tenantId && (
-            <HoursStep tenantId={tenantId} onNext={handleNext} onBack={handleBack} />
+            <TellAiStep
+              tenantId={tenantId}
+              template={selectedTemplate}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
           )}
           {currentStep === 4 && tenantId && (
-            <FaqsStep tenantId={tenantId} onNext={handleNext} onBack={handleBack} />
-          )}
-          {currentStep === 5 && tenantId && (
-            <ToneStep tenantId={tenantId} onComplete={handleComplete} onBack={handleBack} />
+            <SummaryStep
+              tenantId={tenantId}
+              template={selectedTemplate}
+              features={selectedFeatures}
+              onComplete={handleComplete}
+              onBack={handleBack}
+              onEditStep={setCurrentStep}
+            />
           )}
         </div>
 
-        {/* Friendly footer */}
         <p className="text-center text-sm text-stone-400 mt-6">
           You can always change these settings later
         </p>
