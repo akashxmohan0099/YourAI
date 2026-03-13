@@ -35,14 +35,14 @@ export function CommunicationHub({
     return (
       <div className="flex flex-col h-screen">
         {/* Tab bar */}
-        <div className="flex bg-white border-b border-[#d2d2d7]">
+        <div className="flex bg-[var(--surface)] border-b border-[var(--line)]">
           <button
             onClick={() => setActiveTab('chat')}
             className={cn(
               'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors',
               activeTab === 'chat'
-                ? 'text-[#1d1d1f] border-b-2 border-[#1d1d1f] bg-[#f5f5f7]/50'
-                : 'text-[#86868b] hover:text-[#424245] hover:bg-[#f5f5f7]'
+                ? 'text-[var(--ink)] border-b-2 border-[var(--ink)] bg-[var(--surface-muted)]/50'
+                : 'text-[var(--ink-faint)] hover:text-[var(--ink-soft)] hover:bg-[var(--surface-ghost)]'
             )}
           >
             <MessageCircle className="w-4 h-4" />
@@ -53,8 +53,8 @@ export function CommunicationHub({
             className={cn(
               'flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors',
               activeTab === 'call'
-                ? 'text-[#1d1d1f] border-b-2 border-[#1d1d1f] bg-[#f5f5f7]/50'
-                : 'text-[#86868b] hover:text-[#424245] hover:bg-[#f5f5f7]'
+                ? 'text-[var(--ink)] border-b-2 border-[var(--ink)] bg-[var(--surface-muted)]/50'
+                : 'text-[var(--ink-faint)] hover:text-[var(--ink-soft)] hover:bg-[var(--surface-ghost)]'
             )}
           >
             <Phone className="w-4 h-4" />
@@ -106,15 +106,15 @@ function EmbeddedVoicePanel({
   businessName: string
 }) {
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-[#f5f5f7] p-8">
+    <div className="h-full flex flex-col items-center justify-center bg-[var(--surface-muted)] p-8">
       <div className="text-center max-w-sm">
-        <div className="w-16 h-16 bg-[#f5f5f7] border border-[#d2d2d7] rounded-full flex items-center justify-center mx-auto mb-4">
-          <Phone className="w-7 h-7 text-[#1d1d1f]" />
+        <div className="w-16 h-16 bg-[var(--surface-muted)] border border-[var(--line)] rounded-full flex items-center justify-center mx-auto mb-4">
+          <Phone className="w-7 h-7 text-[var(--ink)]" />
         </div>
-        <h3 className="text-lg font-semibold text-[#1d1d1f] mb-1">
+        <h3 className="text-lg font-semibold text-[var(--ink)] mb-1">
           Call {businessName}
         </h3>
-        <p className="text-sm text-[#86868b] mb-6">
+        <p className="text-sm text-[var(--ink-faint)] mb-6">
           Start a voice call with our AI assistant. You can ask questions, book
           appointments, and more -- all by voice.
         </p>

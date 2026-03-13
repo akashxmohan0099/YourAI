@@ -222,8 +222,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* Business Info */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">Business Information</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">Basic details about your business</p>
+          <h2 className="text-lg font-semibold text-[var(--ink)]">Business Information</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">Basic details about your business</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -279,8 +279,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* AI Settings */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">AI Settings</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">Customize how your AI assistant communicates</p>
+          <h2 className="text-lg font-semibold text-[var(--ink)]">AI Settings</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">Customize how your AI assistant communicates</p>
         </div>
 
         <div>
@@ -314,8 +314,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* Daily Briefings */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">Daily Briefings</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">
+          <h2 className="text-lg font-semibold text-[var(--ink)]">Daily Briefings</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">
             Get an AI-generated morning update with your schedule, new conversations, and pending items
           </p>
         </div>
@@ -328,9 +328,9 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
               onChange={(e) => setForm({ ...form, briefing_enabled: e.target.checked })}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-[#d2d2d7] peer-focus:ring-2 peer-focus:ring-[#0066CC] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#d2d2d7] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d1d1f]"></div>
+            <div className="w-11 h-6 bg-[var(--line)] peer-focus:ring-2 peer-focus:ring-[var(--teal)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--sidebar)]"></div>
           </label>
-          <span className="text-sm text-[#424245] font-medium">Enable daily briefings</span>
+          <span className="text-sm text-[var(--ink-soft)] font-medium">Enable daily briefings</span>
         </div>
 
         {form.briefing_enabled && (
@@ -350,8 +350,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* Calendar & Email Sync */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">Calendar & Email Sync (Nylas)</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">
+          <h2 className="text-lg font-semibold text-[var(--ink)]">Calendar & Email Sync (Nylas)</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">
             Connect your email account to sync calendar and enable email communications
           </p>
         </div>
@@ -360,8 +360,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
           <div
             className={`px-4 py-3 rounded-xl text-sm ${
               nylasStatus.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'bg-[rgba(43,114,107,0.12)] text-[var(--teal)] border border-[rgba(43,114,107,0.2)]'
+                : 'bg-[rgba(181,79,64,0.12)] text-[var(--error)] border border-[rgba(181,79,64,0.2)]'
             }`}
           >
             {nylasStatus.message}
@@ -372,12 +372,12 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
           {form.nylas_grant_id ? (
             <div className="flex items-center gap-3">
               <span className="chip chip-teal">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="w-2 h-2 rounded-full bg-[var(--teal)]"></span>
                 Connected
               </span>
               <a
                 href="/api/nylas/auth"
-                className="text-sm text-[#424245] hover:text-[#1d1d1f] underline font-medium"
+                className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] underline font-medium"
               >
                 Reconnect Account
               </a>
@@ -404,7 +404,7 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
               placeholder="Auto-filled after connecting"
               readOnly={!!form.nylas_grant_id}
               className={`${inputClass} ${
-                form.nylas_grant_id ? 'bg-[#f5f5f7] text-[#86868b]' : ''
+                form.nylas_grant_id ? 'bg-[var(--surface-muted)] text-[var(--ink-faint)]' : ''
               }`}
             />
           </div>
@@ -423,8 +423,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* Voice (Vapi) */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">Voice (Vapi)</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">
+          <h2 className="text-lg font-semibold text-[var(--ink)]">Voice (Vapi)</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">
             Configure AI-powered voice calls for your business using Vapi
           </p>
         </div>
@@ -433,8 +433,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
           <div
             className={`px-4 py-3 rounded-xl text-sm ${
               vapiStatus.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'bg-[rgba(43,114,107,0.12)] text-[var(--teal)] border border-[rgba(43,114,107,0.2)]'
+                : 'bg-[rgba(181,79,64,0.12)] text-[var(--error)] border border-[rgba(181,79,64,0.2)]'
             }`}
           >
             {vapiStatus.message}
@@ -445,7 +445,7 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
         <div className="flex items-center gap-3">
           {vapiAssistantId && vapiPhoneNumberId && vapiVoiceEnabled ? (
             <span className="chip chip-teal">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="w-2 h-2 rounded-full bg-[var(--teal)]"></span>
               Connected
             </span>
           ) : vapiAssistantId ? (
@@ -455,12 +455,12 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
             </span>
           ) : (
             <span className="chip">
-              <span className="w-2 h-2 rounded-full bg-[#86868b]"></span>
+              <span className="w-2 h-2 rounded-full bg-[var(--ink-faint)]"></span>
               Not Configured
             </span>
           )}
           {vapiAssistantInfo && (
-            <span className="text-sm text-[#86868b]">
+            <span className="text-sm text-[var(--ink-faint)]">
               Assistant: {vapiAssistantInfo.name}
               {vapiAssistantInfo.voice ? ` | Voice: ${vapiAssistantInfo.voice}` : ''}
             </span>
@@ -476,21 +476,21 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
               onChange={(e) => setVapiVoiceEnabled(e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-[#d2d2d7] peer-focus:ring-2 peer-focus:ring-[#0066CC] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#d2d2d7] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d1d1f]"></div>
+            <div className="w-11 h-6 bg-[var(--line)] peer-focus:ring-2 peer-focus:ring-[var(--teal)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--sidebar)]"></div>
           </label>
-          <span className="text-sm text-[#424245] font-medium">Enable voice calls</span>
+          <span className="text-sm text-[var(--ink-soft)] font-medium">Enable voice calls</span>
         </div>
 
         {/* Web voice widget info */}
         {vapiVoiceEnabled && vapiAssistantId && (
           <div className="panel-muted rounded-[24px] px-4 py-3">
             <div className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-[#424245] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-[var(--ink-soft)] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-sm font-medium text-[#1d1d1f]">Web Voice Widget</p>
-                <p className="text-xs text-[#424245] mt-0.5">
+                <p className="text-sm font-medium text-[var(--ink)]">Web Voice Widget</p>
+                <p className="text-xs text-[var(--ink-soft)] mt-0.5">
                   When enabled, a voice call button will appear on your public chat page alongside
                   the text chat. Customers can call your AI assistant directly from the browser --
                   no phone number needed.
@@ -548,8 +548,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* SMS (Twilio) */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">SMS (Twilio)</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">
+          <h2 className="text-lg font-semibold text-[var(--ink)]">SMS (Twilio)</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">
             Enable AI-powered SMS messaging for your business via Twilio
           </p>
         </div>
@@ -558,8 +558,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
           <div
             className={`px-4 py-3 rounded-xl text-sm ${
               smsStatus.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'bg-[rgba(43,114,107,0.12)] text-[var(--teal)] border border-[rgba(43,114,107,0.2)]'
+                : 'bg-[rgba(181,79,64,0.12)] text-[var(--error)] border border-[rgba(181,79,64,0.2)]'
             }`}
           >
             {smsStatus.message}
@@ -570,7 +570,7 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
         <div className="flex items-center gap-3">
           {smsPhoneNumber && smsEnabled ? (
             <span className="chip chip-teal">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="w-2 h-2 rounded-full bg-[var(--teal)]"></span>
               Active
             </span>
           ) : smsPhoneNumber ? (
@@ -580,12 +580,12 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
             </span>
           ) : (
             <span className="chip">
-              <span className="w-2 h-2 rounded-full bg-[#86868b]"></span>
+              <span className="w-2 h-2 rounded-full bg-[var(--ink-faint)]"></span>
               Not Configured
             </span>
           )}
           {smsPhoneNumber && (
-            <span className="text-sm text-[#86868b] font-mono">{smsPhoneNumber}</span>
+            <span className="text-sm text-[var(--ink-faint)] font-mono">{smsPhoneNumber}</span>
           )}
         </div>
 
@@ -598,9 +598,9 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
               onChange={(e) => setSmsEnabled(e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-[#d2d2d7] peer-focus:ring-2 peer-focus:ring-[#0066CC] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#d2d2d7] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1d1d1f]"></div>
+            <div className="w-11 h-6 bg-[var(--line)] peer-focus:ring-2 peer-focus:ring-[var(--teal)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--line)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--sidebar)]"></div>
           </label>
-          <span className="text-sm text-[#424245] font-medium">Enable SMS messaging</span>
+          <span className="text-sm text-[var(--ink-soft)] font-medium">Enable SMS messaging</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -638,8 +638,8 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
       {/* Chat Widget Info */}
       <div className={sectionClass}>
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f]">Chat Widget</h2>
-          <p className="text-sm text-[#86868b] mt-0.5">
+          <h2 className="text-lg font-semibold text-[var(--ink)]">Chat Widget</h2>
+          <p className="text-sm text-[var(--ink-faint)] mt-0.5">
             Share this link with your customers to chat with your AI assistant
           </p>
         </div>
@@ -659,7 +659,7 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
-        {saved && <span className="text-sm text-emerald-600 font-medium">Saved successfully!</span>}
+        {saved && <span className="text-sm text-[var(--teal)] font-medium">Saved successfully!</span>}
       </div>
     </div>
   )

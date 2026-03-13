@@ -41,8 +41,8 @@ export default async function CampaignsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Campaign engine"
-        title="Retention and follow-up with a clearer pulse."
-        description="Review request, rebooking, loyalty, and reminder campaigns now sit in the same product language as conversations and revenue."
+        title="Automated retention campaigns."
+        description="Review requests, rebooking, loyalty, and reminders."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <p className="text-sm font-semibold text-[var(--ink)]">{campaignRows.length} active or drafted flows</p>

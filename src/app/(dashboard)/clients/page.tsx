@@ -36,8 +36,8 @@ export default async function ClientsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Client directory"
-        title="Known people, not anonymous fragments."
-        description="Every contact is assembled from their messages, calls, and channel identities so your team works from the same customer memory."
+        title="Your customer directory."
+        description="Profiles built from messages, calls, and contact info across all channels."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">

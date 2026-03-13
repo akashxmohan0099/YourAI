@@ -85,7 +85,7 @@ export default function SignupPage() {
               <div>
                 <p className="kicker">Start fresh</p>
                 <h1 className="mt-3 text-4xl font-semibold text-[var(--ink)]">
-                  Build a calmer front desk.
+                  Set up your AI assistant.
                 </h1>
                 <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">
                   Set up the workspace, tell the AI how your business runs, then move into onboarding.
@@ -170,11 +170,10 @@ export default function SignupPage() {
               Setup path
             </span>
             <h2 className="text-5xl font-semibold leading-[0.98] text-[var(--sidebar-ink)]">
-              Configure the assistant like an operations lead, not a prompt engineer.
+              Configure like an operator, not a prompt engineer.
             </h2>
             <p className="text-base leading-8 text-[#d8c9bb]">
-              The onboarding flow captures your business shape, service rhythm, approval rules, and
-              communication style before the AI starts handling customers.
+              Onboarding captures your services, rules, and tone before AI starts handling customers.
             </p>
           </div>
 

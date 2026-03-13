@@ -18,8 +18,8 @@ export default async function ChannelsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Channel controls"
-        title="Decide where the assistant shows up."
-        description="Configure customer-facing entry points, owner notifications, and the approval timing that keeps automation inside your rules."
+        title="Configure customer channels."
+        description="Set up entry points, notifications, and approval timeouts."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">

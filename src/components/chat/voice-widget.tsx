@@ -128,7 +128,7 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
       return (
         <button
           onClick={startCall}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-[#1d1d1f] text-white rounded-xl hover:bg-black transition-all hover:scale-105 shadow-lg font-medium text-sm"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--sidebar)] text-white rounded-xl hover:bg-[var(--sidebar-soft)] transition-all hover:scale-105 shadow-lg font-medium text-sm"
           aria-label={`Call ${businessName}`}
         >
           <Phone className="w-5 h-5" />
@@ -140,7 +140,7 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
     return (
       <button
         onClick={startCall}
-        className="fixed bottom-24 right-6 w-12 h-12 bg-[#1d1d1f] text-white rounded-full shadow-lg hover:bg-black transition-all hover:scale-105 flex items-center justify-center z-50"
+        className="fixed bottom-24 right-6 w-12 h-12 bg-[var(--sidebar)] text-white rounded-full shadow-lg hover:bg-[var(--sidebar-soft)] transition-all hover:scale-105 flex items-center justify-center z-50"
         aria-label={`Call ${businessName}`}
         title={`Call ${businessName}`}
       >
@@ -154,22 +154,22 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
     return (
       <div className={cn(positionClass, 'flex flex-col items-center gap-2')}>
         <div className={cn(
-          'bg-white rounded-2xl border border-[#d2d2d7] px-6 py-4 flex flex-col items-center gap-3 min-w-[180px]',
+          'bg-[var(--surface)] rounded-2xl border border-[var(--line)] px-6 py-4 flex flex-col items-center gap-3 min-w-[180px]',
           !embedded && 'shadow-2xl'
         )}>
           <div className="relative">
-            <div className="w-14 h-14 bg-[#f5f5f7] rounded-full flex items-center justify-center">
-              <Phone className="w-6 h-6 text-[#1d1d1f]" />
+            <div className="w-14 h-14 bg-[var(--surface-muted)] rounded-full flex items-center justify-center">
+              <Phone className="w-6 h-6 text-[var(--ink)]" />
             </div>
-            <div className="absolute inset-0 w-14 h-14 bg-[#d2d2d7] rounded-full animate-ping opacity-40" />
+            <div className="absolute inset-0 w-14 h-14 bg-[var(--line)] rounded-full animate-ping opacity-40" />
           </div>
-          <div className="flex items-center gap-2 text-sm text-[#424245]">
-            <Loader2 className="w-4 h-4 animate-spin text-[#1d1d1f]" />
+          <div className="flex items-center gap-2 text-sm text-[var(--ink-soft)]">
+            <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]" />
             <span>Connecting...</span>
           </div>
           <button
             onClick={endCall}
-            className="text-xs text-[#86868b] hover:text-[#424245] transition-colors"
+            className="text-xs text-[var(--ink-faint)] hover:text-[var(--ink-soft)] transition-colors"
           >
             Cancel
           </button>
@@ -183,7 +183,7 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
     return (
       <div className={positionClass}>
         <div className={cn(
-          'bg-white rounded-2xl border border-[#d2d2d7] px-5 py-4 flex flex-col items-center gap-3 min-w-[200px]',
+          'bg-[var(--surface)] rounded-2xl border border-[var(--line)] px-5 py-4 flex flex-col items-center gap-3 min-w-[200px]',
           !embedded && 'shadow-2xl'
         )}>
           {/* Waveform / speaking indicator */}
@@ -192,23 +192,23 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
               className={cn(
                 'w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
                 isSpeaking
-                  ? 'bg-[#f5f5f7] ring-4 ring-[#d2d2d7]'
-                  : 'bg-[#f5f5f7]'
+                  ? 'bg-[var(--surface-muted)] ring-4 ring-[var(--line)]'
+                  : 'bg-[var(--surface-muted)]'
               )}
             >
               <Mic
                 className={cn(
                   'w-7 h-7 transition-colors',
-                  isSpeaking ? 'text-[#1d1d1f]' : 'text-[#86868b]'
+                  isSpeaking ? 'text-[var(--ink)]' : 'text-[var(--ink-faint)]'
                 )}
               />
             </div>
             {/* Animated rings when speaking */}
             {isSpeaking && (
               <>
-                <div className="absolute inset-0 w-16 h-16 m-auto bg-[#d2d2d7] rounded-full animate-ping opacity-20" />
+                <div className="absolute inset-0 w-16 h-16 m-auto bg-[var(--line)] rounded-full animate-ping opacity-20" />
                 <div
-                  className="absolute w-20 h-20 m-auto bg-[#f5f5f7] rounded-full animate-pulse opacity-30"
+                  className="absolute w-20 h-20 m-auto bg-[var(--surface-muted)] rounded-full animate-pulse opacity-30"
                   style={{ animationDuration: '1.5s' }}
                 />
               </>
@@ -217,10 +217,10 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
 
           {/* Duration */}
           <div className="text-center">
-            <p className="text-xs text-[#86868b] font-medium">
+            <p className="text-xs text-[var(--ink-faint)] font-medium">
               {isSpeaking ? 'AI Speaking...' : 'Listening...'}
             </p>
-            <p className="text-lg font-semibold text-[#1d1d1f] tabular-nums">
+            <p className="text-lg font-semibold text-[var(--ink)] tabular-nums">
               {formatDuration(duration)}
             </p>
           </div>
@@ -233,7 +233,7 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
                 'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
                 isMuted
                   ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'bg-[#f5f5f7] text-[#424245] hover:bg-[#d2d2d7]'
+                  : 'bg-[var(--surface-muted)] text-[var(--ink-soft)] hover:bg-[var(--line)]'
               )}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
               title={isMuted ? 'Unmute' : 'Mute'}
@@ -258,13 +258,13 @@ export function VoiceWidget({ tenantId, assistantId, businessName, embedded = fa
   return (
     <div className={positionClass}>
       <div className={cn(
-        'bg-white rounded-2xl border border-[#d2d2d7] px-6 py-4 flex flex-col items-center gap-2 min-w-[180px]',
+        'bg-[var(--surface)] rounded-2xl border border-[var(--line)] px-6 py-4 flex flex-col items-center gap-2 min-w-[180px]',
         !embedded && 'shadow-2xl'
       )}>
-        <div className="w-12 h-12 bg-[#f5f5f7] rounded-full flex items-center justify-center">
-          <PhoneOff className="w-5 h-5 text-[#86868b]" />
+        <div className="w-12 h-12 bg-[var(--surface-muted)] rounded-full flex items-center justify-center">
+          <PhoneOff className="w-5 h-5 text-[var(--ink-faint)]" />
         </div>
-        <p className="text-sm text-[#86868b] font-medium">Call ended</p>
+        <p className="text-sm text-[var(--ink-faint)] font-medium">Call ended</p>
       </div>
     </div>
   )

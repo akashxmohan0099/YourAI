@@ -61,8 +61,8 @@ export default async function LeadsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Lead pipeline"
-        title="See who is warming up and who is ready to close."
-        description="Lead status, score, and source now live in the same visual language as the rest of the workspace."
+        title="Track leads from first contact to close."
+        description="Lead status, score, and source in one view."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <p className="text-sm font-semibold text-[var(--ink)]">{leadRows.length} tracked leads</p>

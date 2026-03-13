@@ -14,25 +14,25 @@ const features = [
     icon: Phone,
     title: 'Voice that carries context',
     description:
-      'Calls no longer disappear into a black hole. Your AI answers, qualifies, books, and leaves a paper trail.',
+      'AI answers calls, qualifies leads, books appointments, and logs everything.',
   },
   {
     icon: MessageSquare,
     title: 'One inbox for every channel',
     description:
-      'Website chat, SMS, email, and follow-ups move through one operating system instead of four disconnected tabs.',
+      'Chat, SMS, email, and follow-ups in one unified feed.',
   },
   {
     icon: CalendarClock,
     title: 'Bookings with guardrails',
     description:
-      'Appointments, reminders, and approvals stay inside the rules you set, even after hours.',
+      'Appointments and approvals follow your rules, even after hours.',
   },
   {
     icon: ShieldCheck,
     title: 'Owner control without micromanaging',
     description:
-      'Escalations, approvals, and summaries reach you when needed, not every time a customer says hello.',
+      'Escalations and summaries reach you only when needed.',
   },
 ]
 
@@ -82,8 +82,7 @@ export default function HomePage() {
                   for every customer conversation.
                 </h1>
                 <p className="max-w-2xl text-base leading-8 text-[var(--ink-soft)] sm:text-lg">
-                  YourAI handles inbound demand like a calm front-desk team, not a generic chatbot.
-                  Calls, bookings, approvals, and follow-ups all land in one crisp control surface.
+                  YourAI handles calls, bookings, approvals, and follow-ups in one control surface — not a generic chatbot.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
@@ -115,7 +114,7 @@ export default function HomePage() {
                     Live cockpit
                   </p>
                   <h2 className="mt-3 text-3xl font-semibold leading-tight text-[var(--sidebar-ink)]">
-                    Clarity instead of AI theater
+                    Real results, not AI theater
                   </h2>
                 </div>
                 <span className="chip chip-accent border-0 bg-[rgba(208,109,79,0.2)] text-[#ffd8cb]">
@@ -163,7 +162,7 @@ export default function HomePage() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-[var(--sidebar-ink)]">Escalation control</p>
-                        <p className="text-xs text-[#cfc0b2]">Approvals reach the owner only when the rules require it</p>
+                        <p className="text-xs text-[#cfc0b2]">Approvals reach the owner only when rules require it</p>
                       </div>
                     </div>
                   </div>

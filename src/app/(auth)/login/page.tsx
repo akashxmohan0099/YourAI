@@ -54,11 +54,10 @@ export default function LoginPage() {
             </span>
             <div className="space-y-4">
               <h1 className="text-5xl font-semibold leading-[0.98] text-[var(--sidebar-ink)]">
-                Step back into the control room.
+                Welcome back to your workspace.
               </h1>
               <p className="max-w-lg text-base leading-8 text-[#d8c9bb]">
-                Pick up conversations, review bookings, and handle approvals without digging through
-                a pile of disconnected tools.
+                Pick up conversations, review bookings, and handle approvals — all in one place.
               </p>
             </div>
           </div>
@@ -68,14 +67,14 @@ export default function LoginPage() {
               <ShieldCheck className="h-5 w-5 text-[#b7efe7]" />
               <p className="mt-4 text-lg font-semibold text-[var(--sidebar-ink)]">Security-first</p>
               <p className="mt-2 text-sm leading-7 text-[#cfbfaf]">
-                Approvals, channels, and audit trails stay in one accountable surface.
+                Approvals, channels, and audit trails in one place.
               </p>
             </div>
             <div className="rounded-[28px] border border-white/10 bg-white/5 p-5">
               <KeyRound className="h-5 w-5 text-[#ffd9cb]" />
               <p className="mt-4 text-lg font-semibold text-[var(--sidebar-ink)]">Operator speed</p>
               <p className="mt-2 text-sm leading-7 text-[#cfbfaf]">
-                Landing back in the workspace should feel like entering a cockpit, not a settings page.
+                Your workspace — fast, focused, operational.
               </p>
             </div>
           </div>
@@ -99,7 +98,7 @@ export default function LoginPage() {
                 <p className="kicker">Welcome back</p>
                 <h1 className="mt-3 text-4xl font-semibold text-[var(--ink)]">Run today from one screen.</h1>
                 <p className="mt-3 text-sm leading-7 text-[var(--ink-soft)]">
-                  Sign in to review today&apos;s work, manage approvals, and keep every customer thread in context.
+                  Sign in to review work, manage approvals, and pick up where you left off.
                 </p>
               </div>
             </div>

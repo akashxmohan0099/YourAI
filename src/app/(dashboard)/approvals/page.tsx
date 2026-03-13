@@ -25,8 +25,8 @@ export default async function ApprovalsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Approval gate"
-        title="Keep the AI useful without giving it a free pass."
-        description="Sensitive actions queue here with context, expiry windows, and clear decision controls."
+        title="Approve or deny AI actions."
+        description="Sensitive actions queue here with context and expiry."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">

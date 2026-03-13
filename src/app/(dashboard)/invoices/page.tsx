@@ -45,8 +45,8 @@ export default async function InvoicesPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Invoice ledger"
-        title="Revenue status without spreadsheet fatigue."
-        description="Outstanding, paid, overdue, and draft invoices are now easier to scan in the same visual rhythm as the rest of the product."
+        title="Revenue tracking at a glance."
+        description="Outstanding, paid, overdue, and draft invoices."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <p className="text-sm font-semibold text-[var(--ink)]">{invoiceRows.length} invoice records</p>

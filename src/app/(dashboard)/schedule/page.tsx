@@ -42,8 +42,8 @@ export default async function SchedulePage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Schedule board"
-        title="Bookings at a glance, decisions without friction."
-        description="Review today's appointments and scan the rest of the week without losing the surrounding operational context."
+        title="Today's bookings at a glance."
+        description="Review appointments and scan the week ahead."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">

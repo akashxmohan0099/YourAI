@@ -42,8 +42,8 @@ export default async function BriefingsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Morning briefings"
-        title="A calmer start to the day."
-        description="Daily summaries collect appointments, overnight conversations, approvals, and new clients into one clear operator note."
+        title="Daily AI briefings."
+        description="Appointments, conversations, approvals, and new clients summarised each morning."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <p className="text-sm font-semibold text-[var(--ink)]">{briefingRows.length} briefings archived</p>

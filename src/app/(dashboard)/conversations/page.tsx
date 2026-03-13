@@ -19,8 +19,8 @@ export default async function ConversationsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Conversation stream"
-        title="Every channel, one operating log."
-        description="Track calls, texts, chats, and emails in a single feed with live updates and clear status states."
+        title="All channels, one feed."
+        description="Calls, texts, chats, and emails with live updates."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">

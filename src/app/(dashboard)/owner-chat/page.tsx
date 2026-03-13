@@ -37,9 +37,9 @@ export default function OwnerChatPage() {
         <p className="kicker">Owner assistant</p>
         <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="text-4xl font-semibold text-[var(--ink)]">Ask the workspace directly.</h1>
+            <h1 className="text-4xl font-semibold text-[var(--ink)]">Ask your AI assistant.</h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--ink-soft)]">
-              Use the owner assistant for operational questions and actions that require the full internal toolset.
+              Get operational help — schedules, clients, approvals, and actions.
             </p>
           </div>
           <span className="chip chip-teal capitalize">{status === 'streaming' ? 'Responding' : 'Ready'}</span>

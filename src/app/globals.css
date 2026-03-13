@@ -26,6 +26,9 @@
   --error: #b54f40;
   --shadow-soft: 0 28px 80px rgba(84, 53, 27, 0.14);
   --shadow-card: 0 18px 48px rgba(84, 53, 27, 0.1);
+  --radius-sm: 20px;
+  --radius-md: 28px;
+  --radius-lg: 34px;
 }
 
 @theme inline {
@@ -49,19 +52,6 @@ body {
   font-family: var(--font-display), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(85, 57, 37, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(85, 57, 37, 0.045) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 82%);
-  opacity: 0.55;
 }
 
 ::selection {
@@ -368,13 +358,14 @@ pre,
   pointer-events: none;
 }
 
+/* Sidebar is 248px wide */
 .dashboard-main {
   padding: 1rem;
 }
 
 @media (min-width: 768px) {
   .dashboard-main {
-    padding: 1.5rem 1.75rem 2.5rem;
+    padding: 1.5rem 1.75rem 2.5rem calc(248px + 1.75rem);
   }
 }
 
@@ -415,86 +406,16 @@ pre,
   overflow: hidden;
 }
 
-.stat-glow::after {
-  content: "";
-  position: absolute;
-  right: -3rem;
-  top: -3rem;
-  height: 8rem;
-  width: 8rem;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(208, 109, 79, 0.16), transparent 68%);
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.bg-white {
-  background-color: var(--surface) !important;
-}
-
-.bg-\[\#f5f5f7\] {
-  background-color: var(--surface-muted) !important;
-}
-
-.bg-\[\#d2d2d7\] {
-  background-color: rgba(138, 122, 109, 0.28) !important;
-}
-
-.bg-\[\#1d1d1f\],
-.bg-black {
-  background: linear-gradient(135deg, var(--accent), var(--teal)) !important;
-}
-
-.border-\[\#d2d2d7\] {
-  border-color: var(--line) !important;
-}
-
-.text-\[\#1d1d1f\] {
-  color: var(--ink) !important;
-}
-
-.text-\[\#424245\] {
-  color: var(--ink-soft) !important;
-}
-
-.text-\[\#86868b\] {
-  color: var(--ink-faint) !important;
-}
-
-.hover\:bg-\[\#f5f5f7\]:hover {
-  background-color: rgba(255, 247, 238, 0.95) !important;
-}
-
-.hover\:bg-\[\#d2d2d7\]:hover {
-  background-color: rgba(255, 243, 230, 0.92) !important;
-}
-
-.hover\:bg-black:hover {
-  background: linear-gradient(135deg, var(--accent-strong), var(--teal-strong)) !important;
-}
-
-.hover\:text-\[\#1d1d1f\]:hover {
-  color: var(--ink) !important;
-}
-
-.hover\:text-\[\#424245\]:hover {
-  color: var(--ink-soft) !important;
-}
-
-.placeholder\:text-\[\#86868b\]::placeholder {
-  color: var(--ink-faint) !important;
-}
-
-.focus\:border-\[\#0066CC\]:focus {
-  border-color: rgba(43, 114, 107, 0.36) !important;
-}
-
-.focus\:ring-\[\#0066CC\]:focus,
-.focus\:ring-\[\#0066CC\]:focus-visible {
-  --tw-ring-color: rgba(43, 114, 107, 0.18) !important;
-}
-
-.focus\:ring-offset-2:focus,
-.focus\:ring-offset-2:focus-visible {
-  --tw-ring-offset-color: rgba(245, 234, 220, 0.95) !important;
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Minimal scrollbar */

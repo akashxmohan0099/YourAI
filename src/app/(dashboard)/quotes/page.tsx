@@ -49,8 +49,8 @@ export default async function QuotesPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Quote tracker"
-        title="Draft, send, and follow every proposal."
-        description="Quotes now read like part of the operating system rather than a detached admin table."
+        title="Draft, send, and track proposals."
+        description="Manage quotes from draft to accepted."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <p className="text-sm font-semibold text-[var(--ink)]">{accepted} accepted quote{accepted === 1 ? '' : 's'}</p>

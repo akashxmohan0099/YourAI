@@ -104,8 +104,8 @@ export default async function DashboardPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow={`${tenant.name} workspace`}
-        title={`${greeting}. Your operation is staged and visible.`}
-        description="Use this view to spot pressure points quickly: live conversations, today's schedule, approvals, and the newest customer activity without jumping across tabs."
+        title={`${greeting}. Here's your business today.`}
+        description="Live conversations, schedule, approvals, and recent activity."
         actions={
           <>
             <Link href="/conversations" className="btn-primary">

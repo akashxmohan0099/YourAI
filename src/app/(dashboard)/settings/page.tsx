@@ -18,8 +18,8 @@ export default async function SettingsPage() {
     <div className="dashboard-stack">
       <PageIntro
         eyebrow="Workspace settings"
-        title="Shape how the assistant thinks, sounds, and escalates."
-        description="Business details, AI guidance, daily briefings, and channel credentials all live here in one operational configuration surface."
+        title="AI behaviour, tone, and integrations."
+        description="Business details, AI settings, briefings, and credentials."
         aside={
           <div className="panel-muted w-full rounded-[28px] p-5 lg:max-w-sm">
             <div className="flex items-center gap-3">
