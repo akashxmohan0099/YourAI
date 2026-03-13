@@ -1,12 +1,32 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify the user is authenticated and owns this tenant
+    const userSupabase = await createClient()
+    const { data: { user } } = await userSupabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { tenantId } = await request.json()
 
     if (!tenantId) {
       return NextResponse.json({ error: 'Missing tenantId' }, { status: 400 })
+    }
+
+    // Verify ownership
+    const { data: profile } = await userSupabase
+      .from('user_profiles')
+      .select('tenant_id')
+      .eq('auth_user_id', user.id)
+      .eq('tenant_id', tenantId)
+      .single()
+
+    if (!profile) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const supabase = createAdminClient()

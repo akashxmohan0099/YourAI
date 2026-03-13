@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       .from('services')
       .select('name')
       .eq('tenant_id', tenantId)
-      .eq('active', true)
+      .eq('is_active', true)
 
     const serviceNames = (services || []).map((s: any) => s.name)
 

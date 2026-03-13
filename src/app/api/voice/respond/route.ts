@@ -241,7 +241,7 @@ async function handleTransferDestination(body: VapiServerMessage): Promise<NextR
     .from('services')
     .select('name')
     .eq('tenant_id', tenantId)
-    .eq('active', true)
+    .eq('is_active', true)
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const serverUrl = `${appUrl}/api/voice/respond`
@@ -306,7 +306,7 @@ async function handleAssistantRequest(body: VapiServerMessage): Promise<NextResp
     .from('services')
     .select('name')
     .eq('tenant_id', tenantId)
-    .eq('active', true)
+    .eq('is_active', true)
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const serverUrl = `${appUrl}/api/voice/respond`

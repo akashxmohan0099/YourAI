@@ -2,6 +2,7 @@ import { NormalizedMessage, ChannelAdapter } from './types'
 import { WebChatAdapter } from './adapters/web-chat'
 import { VapiAdapter } from './adapters/vapi'
 import { TwilioSmsAdapter } from './adapters/twilio-sms'
+import { nylasEmailAdapter } from './adapters/nylas-email'
 import { resolveClient } from '../clients/resolver'
 import { createAdminClient } from '../supabase/admin'
 
@@ -9,6 +10,7 @@ const adapters: Record<string, ChannelAdapter> = {
   web_chat: new WebChatAdapter(),
   voice: new VapiAdapter(),
   sms: new TwilioSmsAdapter(),
+  email: nylasEmailAdapter,
 }
 
 export async function normalizeIncomingMessage(
@@ -64,6 +66,8 @@ function getIdentifierFromMessage(msg: NormalizedMessage): string | null {
       return (msg.metadata.from as string) || null
     case 'web_chat':
       return (msg.metadata.sessionId as string) || null
+    case 'email':
+      return (msg.metadata.from as string) || null
     default:
       return null
   }

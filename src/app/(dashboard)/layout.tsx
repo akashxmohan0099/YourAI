@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { requireTenant } from '@/lib/auth/guards'
 import { redirect } from 'next/navigation'
 import { DashboardSidebar } from '@/components/dashboard/sidebar'
@@ -6,7 +7,7 @@ import { DashboardHeader } from '@/components/dashboard/header'
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   const { tenant, profile } = await requireTenant()
 

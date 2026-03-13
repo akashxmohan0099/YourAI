@@ -10,7 +10,7 @@ interface SummaryStepProps {
   tenantId: string
   template: BusinessTypeTemplate | null
   features: FeatureKey[]
-  onComplete: () => void
+  onComplete: () => Promise<void>
   onBack: () => void
   onEditStep: (step: number) => void
 }
@@ -37,7 +37,11 @@ export function SummaryStep({ tenantId, template, features, onComplete, onBack, 
 
   const handleLaunch = async () => {
     setLaunching(true)
-    await onComplete()
+    try {
+      await onComplete()
+    } catch {
+      setLaunching(false)
+    }
   }
 
   if (loading) {

@@ -7,7 +7,7 @@ export const nylasEmailAdapter: ChannelAdapter = {
     return {
       tenantId: '', // Resolved by normalizer
       conversationId: '', // Resolved by normalizer
-      clientId: '', // Resolved by resolver
+      clientId: null, // Resolved by resolver
       channel: 'email',
       content: message.body || message.snippet || '',
       channelMessageId: message.id,

@@ -1,3 +1,4 @@
+import type { ElementType } from 'react'
 import { requireTenant } from '@/lib/auth/guards'
 import { createClient } from '@/lib/supabase/server'
 import { Target, Sparkles, UserPlus, MessageCircle, FileCheck, Trophy, XCircle } from 'lucide-react'
@@ -22,7 +23,7 @@ export default async function LeadsPage() {
     lost: 'bg-red-100 text-red-700',
   }
 
-  const statusIcons: Record<string, React.ElementType> = {
+  const statusIcons: Record<string, ElementType> = {
     new: Sparkles,
     contacted: MessageCircle,
     qualified: UserPlus,

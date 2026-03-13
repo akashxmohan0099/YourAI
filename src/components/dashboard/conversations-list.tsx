@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ElementType } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatRelativeTime } from '@/lib/utils'
 import Link from 'next/link'
@@ -21,7 +21,7 @@ interface ConversationsListProps {
   tenantId: string
 }
 
-const channelIcons: Record<string, React.ElementType> = {
+const channelIcons: Record<string, ElementType> = {
   web_chat: MessageSquare,
   voice: Phone,
   email: Mail,

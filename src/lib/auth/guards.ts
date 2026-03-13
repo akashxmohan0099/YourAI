@@ -13,8 +13,12 @@ export async function requireAuth() {
 }
 
 export async function requireTenant() {
-  const user = await requireAuth()
   const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    redirect('/login')
+  }
 
   const { data: profile } = await supabase
     .from('user_profiles')
@@ -26,10 +30,15 @@ export async function requireTenant() {
     redirect('/signup')
   }
 
+  const tenant = profile.tenants as any
+  if (!tenant) {
+    redirect('/signup')
+  }
+
   return {
     user,
     profile,
-    tenant: profile.tenants as any,
+    tenant,
     tenantId: profile.tenant_id,
     role: profile.role,
   }

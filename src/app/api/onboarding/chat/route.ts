@@ -1,12 +1,20 @@
 import { generateText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { getTemplateById } from '@/lib/onboarding/business-type-templates'
 
 export const maxDuration = 30
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify the user is authenticated
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { tenantId, messages, currentExtracted, templateId } = await request.json()
 
     const template = templateId ? getTemplateById(templateId) : null

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ElementType } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatRelativeTime } from '@/lib/utils'
 import { CheckCircle, XCircle, Clock, AlertTriangle, ShieldCheck } from 'lucide-react'
@@ -73,7 +73,7 @@ export function ApprovalQueue({ approvals: initialApprovals, tenantId }: Approva
     setProcessing(null)
   }
 
-  const statusConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+  const statusConfig: Record<string, { icon: ElementType; color: string; bg: string }> = {
     pending: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-100' },
     approved: { icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-100' },
     denied: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },

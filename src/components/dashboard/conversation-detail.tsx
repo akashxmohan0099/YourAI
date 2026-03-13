@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, type ElementType } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatDateTime } from '@/lib/utils'
 import { ArrowLeft, Bot, User, MessageSquare, Phone, Mail, Smartphone, Clock } from 'lucide-react'
@@ -20,7 +20,7 @@ interface ConversationDetailProps {
   tenantId: string
 }
 
-const channelIcons: Record<string, React.ElementType> = {
+const channelIcons: Record<string, ElementType> = {
   web_chat: MessageSquare,
   voice: Phone,
   email: Mail,
