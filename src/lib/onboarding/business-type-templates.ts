@@ -2417,3 +2417,66 @@ export function getTemplatesByIndustry(industry: string): BusinessTypeTemplate[]
 export const INDUSTRIES = [
   ...new Set(BUSINESS_TYPE_TEMPLATES.map((t) => t.industry)),
 ] as const
+
+const INDUSTRY_KEYWORDS: Record<string, string> = {
+  hair: 'hair_beauty_salon',
+  beauty: 'hair_beauty_salon',
+  salon: 'hair_beauty_salon',
+  hairdresser: 'hair_beauty_salon',
+  nail: 'hair_beauty_salon',
+  spa: 'hair_beauty_salon',
+  barber: 'barbershop',
+  plumb: 'plumber',
+  electric: 'electrician',
+  hvac: 'hvac',
+  'air conditioning': 'hvac',
+  aircon: 'hvac',
+  clean: 'cleaning',
+  landscape: 'landscaping',
+  garden: 'landscaping',
+  lawn: 'landscaping',
+  mechanic: 'auto_mechanic',
+  auto: 'auto_mechanic',
+  'car repair': 'auto_mechanic',
+  restaurant: 'restaurant',
+  cafe: 'restaurant',
+  coffee: 'restaurant',
+  food: 'restaurant',
+  catering: 'restaurant',
+  gym: 'personal_trainer',
+  fitness: 'personal_trainer',
+  'personal train': 'personal_trainer',
+  medical: 'medical_dental',
+  dental: 'medical_dental',
+  doctor: 'medical_dental',
+  dentist: 'medical_dental',
+  clinic: 'medical_dental',
+  physio: 'medical_dental',
+  chiro: 'medical_dental',
+  'real estate': 'real_estate',
+  property: 'real_estate',
+  account: 'accounting',
+  tax: 'accounting',
+  bookkeep: 'accounting',
+  legal: 'legal',
+  law: 'legal',
+  solicitor: 'legal',
+  attorney: 'legal',
+  photo: 'photography',
+  video: 'photography',
+  pet: 'pet_grooming_vet',
+  vet: 'pet_grooming_vet',
+  animal: 'pet_grooming_vet',
+  dog: 'pet_grooming_vet',
+  groom: 'pet_grooming_vet',
+}
+
+export function matchIndustryToTemplate(industry: string): BusinessTypeTemplate | undefined {
+  const lower = industry.toLowerCase()
+  for (const [keyword, templateId] of Object.entries(INDUSTRY_KEYWORDS)) {
+    if (lower.includes(keyword)) {
+      return getTemplateById(templateId)
+    }
+  }
+  return undefined
+}
