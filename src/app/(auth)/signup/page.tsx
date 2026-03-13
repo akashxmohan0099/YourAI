@@ -19,24 +19,30 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          business_name: businessName,
+    try {
+      const supabase = createClient()
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            business_name: businessName,
+          },
         },
-      },
-    })
+      })
 
-    if (signUpError) {
-      setError(signUpError.message)
-      setLoading(false)
-      return
-    }
+      if (signUpError) {
+        setError(signUpError.message)
+        setLoading(false)
+        return
+      }
 
-    if (data.user) {
+      if (!data.user) {
+        setError('Signup succeeded but no user was returned. Please try again.')
+        setLoading(false)
+        return
+      }
+
       // Create tenant and profile via server action
       const res = await fetch('/api/auth/setup', {
         method: 'POST',
@@ -49,13 +55,17 @@ export default function SignupPage() {
       })
 
       if (!res.ok) {
-        setError('Failed to set up your account. Please try again.')
+        const body = await res.text()
+        setError(`Failed to set up your account: ${body}`)
         setLoading(false)
         return
       }
 
       router.push('/onboarding')
       router.refresh()
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred')
+      setLoading(false)
     }
   }
 
