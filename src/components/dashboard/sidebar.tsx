@@ -12,6 +12,9 @@ import {
   ExternalLink,
   Menu,
   X,
+  Calendar,
+  Bot,
+  Newspaper,
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -23,9 +26,12 @@ interface SidebarProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'AI Assistant', href: '/owner-chat', icon: Bot },
+  { name: 'Schedule', href: '/schedule', icon: Calendar },
   { name: 'Conversations', href: '/conversations', icon: MessageSquare },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Approvals', href: '/approvals', icon: ShieldCheck },
+  { name: 'Briefings', href: '/briefings', icon: Newspaper },
   { name: 'Channels', href: '/channels', icon: Radio },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]

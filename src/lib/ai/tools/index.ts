@@ -5,6 +5,12 @@ import { getHoursTool } from './get-hours'
 import { getFaqsTool } from './get-faqs'
 import { checkAvailabilityTool } from './check-availability'
 import { requestApprovalTool } from './request-approval'
+import { createAppointmentTool } from './create-appointment'
+import { rescheduleAppointmentTool } from './reschedule-appointment'
+import { cancelAppointmentTool } from './cancel-appointment'
+import { getScheduleTool } from './get-schedule'
+import { searchClientsTool } from './search-clients'
+import { addClientNoteTool } from './add-client-note'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 export function getCustomerTools(
@@ -35,8 +41,21 @@ export function getOwnerTools(
   tenantId?: string,
   conversationId?: string
 ) {
-  return {
-    ...getCustomerTools(context),
-    // Owner-specific tools added in Phase 3
+  const customerTools = getCustomerTools(context)
+  const tools: Record<string, any> = { ...customerTools }
+
+  if (supabase && tenantId) {
+    tools.createAppointment = createAppointmentTool(context, supabase, tenantId)
+    tools.rescheduleAppointment = rescheduleAppointmentTool(supabase, tenantId)
+    tools.cancelAppointment = cancelAppointmentTool(supabase, tenantId)
+    tools.getSchedule = getScheduleTool(supabase, tenantId)
+    tools.searchClients = searchClientsTool(supabase, tenantId)
+    tools.addClientNote = addClientNoteTool(supabase, tenantId)
   }
+
+  if (supabase && tenantId && conversationId) {
+    tools.requestApproval = requestApprovalTool(supabase, tenantId, conversationId)
+  }
+
+  return tools
 }

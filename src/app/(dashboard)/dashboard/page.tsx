@@ -1,13 +1,16 @@
 import { requireTenant } from '@/lib/auth/guards'
 import { createClient } from '@/lib/supabase/server'
-import { MessageSquare, Users, Clock, BarChart3 } from 'lucide-react'
+import { MessageSquare, Users, Clock, Calendar } from 'lucide-react'
 
 export default async function DashboardPage() {
   const { tenantId, tenant } = await requireTenant()
   const supabase = await createClient()
 
+  const today = new Date()
+  const todayStr = today.toISOString().split('T')[0]
+
   // Fetch stats
-  const [conversationsResult, clientsResult, recentConversations] = await Promise.all([
+  const [conversationsResult, clientsResult, recentConversations, todayAppointments] = await Promise.all([
     supabase
       .from('conversations')
       .select('id', { count: 'exact', head: true })
@@ -22,17 +25,25 @@ export default async function DashboardPage() {
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .neq('status', 'cancelled')
+      .gte('starts_at', `${todayStr}T00:00:00`)
+      .lte('starts_at', `${todayStr}T23:59:59`),
   ])
 
   const totalConversations = conversationsResult.count || 0
   const totalClients = clientsResult.count || 0
   const recent = recentConversations.data || []
+  const todayApptCount = todayAppointments.count || 0
 
   const stats = [
-    { name: 'Total Conversations', value: totalConversations, icon: MessageSquare, color: 'text-blue-600 bg-blue-100' },
+    { name: 'Today\'s Appointments', value: todayApptCount, icon: Calendar, color: 'text-blue-600 bg-blue-100' },
     { name: 'Total Clients', value: totalClients, icon: Users, color: 'text-green-600 bg-green-100' },
+    { name: 'Total Conversations', value: totalConversations, icon: MessageSquare, color: 'text-purple-600 bg-purple-100' },
     { name: 'Active Now', value: recent.filter((c: any) => c.status === 'active').length, icon: Clock, color: 'text-orange-600 bg-orange-100' },
-    { name: 'Chat Link', value: `/chat/${tenant.slug}`, icon: BarChart3, color: 'text-purple-600 bg-purple-100', isLink: true },
   ]
 
   return (
@@ -52,11 +63,7 @@ export default async function DashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-500">{stat.name}</p>
-                {stat.isLink ? (
-                  <p className="text-xs text-blue-600 font-mono mt-0.5">{stat.value as string}</p>
-                ) : (
-                  <p className="text-xl font-semibold text-gray-900">{stat.value as number}</p>
-                )}
+                <p className="text-xl font-semibold text-gray-900">{stat.value}</p>
               </div>
             </div>
           </div>

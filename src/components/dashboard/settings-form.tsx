@@ -21,6 +21,10 @@ export function SettingsForm({ tenantId, tenantSlug, config, services }: Setting
     website: config?.website || '',
     tone: config?.tone || 'friendly',
     custom_instructions: config?.custom_instructions || '',
+    briefing_enabled: config?.briefing_enabled || false,
+    briefing_time: config?.briefing_time || '07:00',
+    nylas_grant_id: config?.nylas_grant_id || '',
+    nylas_calendar_id: config?.nylas_calendar_id || '',
   })
   const supabase = createClient()
 
@@ -116,6 +120,68 @@ export function SettingsForm({ tenantId, tenantSlug, config, services }: Setting
             placeholder="Special instructions for your AI assistant..."
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+        </div>
+      </div>
+
+      {/* Daily Briefings */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">Daily Briefings</h2>
+        <p className="text-sm text-gray-600">
+          Get an AI-generated morning update with your schedule, new conversations, and pending items.
+        </p>
+
+        <div className="flex items-center gap-3">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.briefing_enabled}
+              onChange={(e) => setForm({ ...form, briefing_enabled: e.target.checked })}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+          <span className="text-sm text-gray-700">Enable daily briefings</span>
+        </div>
+
+        {form.briefing_enabled && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Briefing Time (UTC)</label>
+            <input
+              type="time"
+              value={form.briefing_time}
+              onChange={(e) => setForm({ ...form, briefing_time: e.target.value })}
+              className="w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Calendar Sync */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">Calendar Sync (Nylas)</h2>
+        <p className="text-sm text-gray-600">
+          Connect your calendar to sync appointments automatically.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nylas Grant ID</label>
+            <input
+              value={form.nylas_grant_id}
+              onChange={(e) => setForm({ ...form, nylas_grant_id: e.target.value })}
+              placeholder="Grant ID from Nylas dashboard"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Calendar ID</label>
+            <input
+              value={form.nylas_calendar_id}
+              onChange={(e) => setForm({ ...form, nylas_calendar_id: e.target.value })}
+              placeholder="Calendar ID to sync with"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
         </div>
       </div>
 
