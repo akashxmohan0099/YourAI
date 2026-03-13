@@ -33,7 +33,7 @@ export function SettingsForm({ tenantId, tenantSlug, config, services }: Setting
 
   // Voice (Vapi) state
   const [vapiAssistantId, setVapiAssistantId] = useState(
-    config?.vapi_assistant_id || '5fabbe4d-3e1d-48a4-8a98-83fd49b3c5f5'
+    config?.vapi_assistant_id || ''
   )
   const [vapiOwnerAssistantId, setVapiOwnerAssistantId] = useState(
     config?.vapi_owner_assistant_id || ''

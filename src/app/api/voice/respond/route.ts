@@ -192,12 +192,65 @@ async function handleVoiceInput(body: VapiServerMessage): Promise<NextResponse> 
 }
 
 async function handleToolCalls(body: VapiServerMessage): Promise<NextResponse> {
-  // Vapi sends tool calls that we need to resolve
+  const supabase = createAdminClient()
   const toolCalls = body.message?.toolCallList || []
-  const results = toolCalls.map((tc) => ({
-    toolCallId: tc.id,
-    result: JSON.stringify({ message: 'Tool not implemented yet' }),
-  }))
+
+  const tenantId = await resolveTenantFromChannel('voice', body.message)
+  if (!tenantId) {
+    const results = toolCalls.map((tc) => ({
+      toolCallId: tc.id,
+      result: JSON.stringify({ error: 'Could not resolve tenant' }),
+    }))
+    return NextResponse.json({ messageResponse: { toolResults: results } })
+  }
+
+  // Build context and get tools
+  const context = await buildBusinessContext(supabase, tenantId)
+
+  // Detect owner vs customer to determine available tools
+  const callerPhone = body.message?.call?.customer?.number
+  const assistantId = body.message?.call?.assistantId
+  const ownerCall = await isOwnerCall(supabase, tenantId, callerPhone, assistantId)
+
+  const { getCustomerTools, getOwnerTools } = await import('@/lib/ai/tools')
+  const tools = ownerCall
+    ? getOwnerTools(context, supabase, tenantId)
+    : getCustomerTools(context, supabase, tenantId)
+
+  // Execute each tool call
+  const results = await Promise.all(
+    toolCalls.map(async (tc) => {
+      const fnName = tc.function?.name
+      let args: Record<string, unknown> = {}
+      try {
+        args = tc.function?.arguments ? JSON.parse(tc.function.arguments) : {}
+      } catch {
+        // arguments may already be parsed or empty
+      }
+
+      const toolDef = tools[fnName]
+      if (!toolDef || !toolDef.execute) {
+        return {
+          toolCallId: tc.id,
+          result: JSON.stringify({ error: `Unknown tool: ${fnName}` }),
+        }
+      }
+
+      try {
+        const output = await toolDef.execute(args)
+        return {
+          toolCallId: tc.id,
+          result: JSON.stringify(output),
+        }
+      } catch (err: any) {
+        console.error(`Tool ${fnName} failed:`, err)
+        return {
+          toolCallId: tc.id,
+          result: JSON.stringify({ error: `Tool failed: ${err.message}` }),
+        }
+      }
+    })
+  )
 
   return NextResponse.json({ messageResponse: { toolResults: results } })
 }

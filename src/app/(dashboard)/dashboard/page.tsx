@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
   // Fetch stats
-  const [conversationsResult, clientsResult, recentConversations, todayAppointments] = await Promise.all([
+  const [conversationsResult, clientsResult, recentConversations, todayAppointments, pendingApprovalsResult] = await Promise.all([
     supabase
       .from('conversations')
       .select('id', { count: 'exact', head: true })
@@ -34,12 +34,18 @@ export default async function DashboardPage() {
       .neq('status', 'cancelled')
       .gte('starts_at', `${todayStr}T00:00:00`)
       .lte('starts_at', `${todayStr}T23:59:59`),
+    supabase
+      .from('approvals')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .eq('status', 'pending'),
   ])
 
   const totalConversations = conversationsResult.count || 0
   const totalClients = clientsResult.count || 0
   const recent = recentConversations.data || []
   const todayApptCount = todayAppointments.count || 0
+  const pendingApprovals = pendingApprovalsResult.count || 0
   const activeCount = recent.filter((c: any) => c.status === 'active').length
 
   const stats = [
@@ -61,7 +67,7 @@ export default async function DashboardPage() {
     },
     {
       name: 'Pending Approvals',
-      value: 0,
+      value: pendingApprovals,
       icon: CheckCircle,
       iconColor: 'text-[#86868b]',
       bgColor: 'bg-[#f5f5f7]',

@@ -101,7 +101,7 @@ export default function SignupPage() {
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               className="block w-full rounded-xl border border-[#d2d2d7] px-3 py-2 text-sm text-[#1d1d1f] focus:border-[#0066CC] focus:outline-none focus:ring-1 focus:ring-[#0066CC] placeholder:text-[#86868b]"
-              placeholder="Acme Services"
+              placeholder="Your business name"
             />
           </div>
 
