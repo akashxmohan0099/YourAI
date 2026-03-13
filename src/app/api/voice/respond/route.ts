@@ -7,8 +7,9 @@ import { resolveClient } from '@/lib/clients/resolver'
 import type { VapiServerMessage } from '@/lib/vapi/types'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { buildVapiServerFields, verifyVapiRequest } from '@/lib/vapi/server-auth'
+import { sendSms } from '@/lib/twilio/client'
 
-export const maxDuration = 10 // Voice requires fast responses
+export const maxDuration = 30 // Voice tool calls need headroom
 
 // ── Helpers ────────────────────────────────────────────────────────────
 
@@ -392,15 +393,20 @@ export async function POST(request: NextRequest) {
     const body: VapiServerMessage = await request.json()
     const messageType = body.message?.type
 
+    console.log('[voice/respond] Message type:', messageType)
+
     switch (messageType) {
       case 'assistant-request':
         return await handleAssistantRequest(body)
 
-      case 'tool-calls':
-        if (body.message?.toolCallList) {
+      case 'tool-calls': {
+        const toolList = body.message?.toolCallList || []
+        console.log('[voice/respond] Tool calls received:', toolList.map(t => t.function?.name))
+        if (toolList.length > 0) {
           return await handleToolCalls(body)
         }
         return NextResponse.json({})
+      }
 
       case 'status-update':
         return await handleStatusUpdate(body)
@@ -573,6 +579,7 @@ async function handleToolCalls(body: VapiServerMessage): Promise<NextResponse> {
 
       const toolDef = tools[fnName]
       if (!toolDef || !toolDef.execute) {
+        console.error(`[voice/respond] Unknown tool: "${fnName}". Available:`, Object.keys(tools))
         return {
           toolCallId: tc.id,
           result: JSON.stringify({ error: `Unknown tool: ${fnName}` }),
@@ -580,7 +587,9 @@ async function handleToolCalls(body: VapiServerMessage): Promise<NextResponse> {
       }
 
       try {
+        console.log(`[voice/respond] Executing tool: ${fnName}`, JSON.stringify(args))
         const output = await toolDef.execute(args)
+        console.log(`[voice/respond] Tool ${fnName} result:`, JSON.stringify(output))
 
         // Log to audit
         await supabase.from('ai_audit_log').insert({
@@ -598,7 +607,7 @@ async function handleToolCalls(body: VapiServerMessage): Promise<NextResponse> {
           result: JSON.stringify(output),
         }
       } catch (err: any) {
-        console.error(`Tool ${fnName} failed:`, err)
+        console.error(`[voice/respond] Tool ${fnName} FAILED:`, err.message, err.stack)
         return {
           toolCallId: tc.id,
           result: JSON.stringify({ error: `Tool failed: ${err.message}` }),
@@ -698,6 +707,51 @@ async function handleEndOfCall(body: VapiServerMessage) {
       },
     })
     .eq('id', conversationId)
+
+  // ── Post-call confirmation SMS ────────────────────────────────────
+  // Send a confirmation text to the caller summarising the call
+  if (callerNumber && transcript) {
+    try {
+      // Check if SMS is enabled for this tenant
+      const { data: config } = await supabase
+        .from('business_config')
+        .select('business_name, sms_enabled')
+        .eq('tenant_id', tenantId)
+        .single()
+
+      if (config?.sms_enabled) {
+        const businessName = config.business_name || 'Our business'
+
+        // Use the Vapi summary if available, otherwise build one from transcript
+        const callSummary = summary || transcript.slice(0, 300)
+
+        // Generate a short, friendly confirmation SMS
+        const { generateText } = await import('ai')
+        const { createAnthropic } = await import('@ai-sdk/anthropic')
+        const anthropic = createAnthropic()
+
+        const { text: confirmationMessage } = await generateText({
+          model: anthropic('claude-sonnet-4-20250514'),
+          system: `You write brief, friendly post-call confirmation SMS messages for ${businessName}. Keep it under 300 characters. Include any appointments booked, key info discussed, or next steps. Do NOT include greetings like "Hi" — jump straight to the confirmation. End with the business name. Do not use emojis.`,
+          prompt: `Write a post-call confirmation SMS based on this call summary:\n\n${callSummary}`,
+        })
+
+        await sendSms(callerNumber, confirmationMessage)
+
+        // Log the confirmation SMS
+        await supabase.from('messages').insert({
+          conversation_id: conversationId,
+          tenant_id: tenantId,
+          role: 'system',
+          content: `Post-call SMS sent: ${confirmationMessage}`,
+          metadata: { channel: 'sms', type: 'post_call_confirmation', callId },
+        })
+      }
+    } catch (smsErr) {
+      console.error('Post-call SMS error:', smsErr)
+      // Non-critical — don't fail the end-of-call handling
+    }
+  }
 }
 
 // ── transfer-destination-request ───────────────────────────────────────
