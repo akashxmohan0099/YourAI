@@ -20,10 +20,11 @@ const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 function getWeekDates(offset: number) {
   const today = new Date()
-  const dayOfWeek = today.getDay() // 0=Sun
-  const daysUntilMonday = dayOfWeek === 0 ? 1 : dayOfWeek === 1 ? 0 : 8 - dayOfWeek
+  const dayOfWeek = today.getDay() // 0=Sun, 1=Mon, ... 6=Sat
+  // Go back to this week's Monday (if Sun, go back 6 days)
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
   const monday = new Date(today)
-  monday.setDate(today.getDate() + daysUntilMonday + offset * 7)
+  monday.setDate(today.getDate() - daysSinceMonday + offset * 7)
 
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday)
@@ -83,7 +84,7 @@ export function RosteringView({ initialMembers }: RosteringViewProps) {
         setCallMessage(null)
       }, 8000)
     } else {
-      const err = await res.json()
+      const err = await res.json().catch(() => ({ error: `Server error ${res.status}` }))
       setCallMessage(err.error || 'Failed to start call')
       setCallingId(null)
     }

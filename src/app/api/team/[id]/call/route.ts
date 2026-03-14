@@ -9,6 +9,7 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  try {
   const { tenantId } = await requireTenant()
   const { id } = await params
   const supabase = createAdminClient()
@@ -24,6 +25,14 @@ export async function POST(
 
   if (!member) return NextResponse.json({ error: 'Team member not found' }, { status: 404 })
   if (!member.phone) return NextResponse.json({ error: 'No phone number set' }, { status: 400 })
+
+  // Normalise Australian numbers to E.164 (e.g. 0466931772 → +61466931772)
+  let phoneNumber = member.phone.replace(/\s+/g, '')
+  if (phoneNumber.startsWith('0') && !phoneNumber.startsWith('+')) {
+    phoneNumber = `+61${phoneNumber.slice(1)}`
+  } else if (!phoneNumber.startsWith('+')) {
+    phoneNumber = `+${phoneNumber}`
+  }
 
   // Get Vapi config
   const { data: config } = await supabase
@@ -65,7 +74,7 @@ export async function POST(
     },
     body: JSON.stringify({
       phoneNumberId: config.vapi_phone_number_id,
-      customer: { number: member.phone },
+      customer: { number: phoneNumber },
       assistant: {
         name: 'Availability Checker',
         firstMessage: `Hi ${member.name}! This is the AI assistant from ${config.business_name}. I'm calling to check your availability for the week starting ${weekStart}. What days and times can you work?`,
@@ -112,10 +121,14 @@ This is a phone call. Be natural and concise.`,
 
   if (!vapiRes.ok) {
     const errText = await vapiRes.text()
-    console.error('Vapi availability call error:', errText)
-    return NextResponse.json({ error: 'Failed to initiate call' }, { status: 500 })
+    console.error('Vapi availability call error:', vapiRes.status, errText)
+    return NextResponse.json({ error: `Failed to initiate call: ${errText}` }, { status: 500 })
   }
 
   const call = await vapiRes.json()
   return NextResponse.json({ callId: call.id, status: 'calling' })
+  } catch (err) {
+    console.error('Team call error:', err)
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 })
+  }
 }
