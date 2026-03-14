@@ -387,7 +387,7 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
 
         {form.briefing_enabled && (
           <div>
-            <label className={labelClass}>Briefing Time (UTC)</label>
+            <label className={labelClass}>Briefing Time (your local time)</label>
             <input
               type="time"
               value={form.briefing_time}
@@ -422,28 +422,46 @@ export function SettingsForm({ tenantId, tenantSlug, config }: SettingsFormProps
 
         <div>
           {form.nylas_grant_id ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="chip chip-teal">
                 <span className="w-2 h-2 rounded-full bg-[var(--teal)]"></span>
                 Connected
               </span>
               <a
-                href="/api/nylas/auth"
+                href="/api/nylas/auth?provider=google"
                 className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] underline font-medium"
               >
-                Reconnect Account
+                Reconnect with Google
+              </a>
+              <a
+                href="/api/nylas/auth?provider=microsoft"
+                className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] underline font-medium"
+              >
+                Reconnect with Microsoft
               </a>
             </div>
           ) : (
-            <a
-              href="/api/nylas/auth"
-              className="btn-primary"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              Connect Email Account
-            </a>
+            <div className="flex items-center gap-3 flex-wrap">
+              <a
+                href="/api/nylas/auth?provider=google"
+                className="btn-primary"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                </svg>
+                Connect Google
+              </a>
+              <a
+                href="/api/nylas/auth?provider=microsoft"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-white/60 px-5 py-2.5 text-sm font-semibold text-[var(--ink)] hover:bg-white/80 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.4 2H2v9.4h9.4V2zM22 2h-9.4v9.4H22V2zM11.4 12.6H2V22h9.4v-9.4zM22 12.6h-9.4V22H22v-9.4z" />
+                </svg>
+                Connect Microsoft
+              </a>
+            </div>
           )}
         </div>
 

@@ -9,8 +9,13 @@ function signState(tenantId: string, userId: string): string {
   return `${payload}:${hmac}`
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const url = new URL(request.url)
+    const provider = url.searchParams.get('provider') || 'google'
+    const validProviders = ['google', 'microsoft']
+    const selectedProvider = validProviders.includes(provider) ? provider : 'google'
+
     const supabase = await createClient()
     const {
       data: { user },
@@ -57,7 +62,7 @@ export async function GET() {
       body: JSON.stringify({
         client_id: clientId,
         redirect_uri: redirectUri,
-        provider: 'microsoft',
+        provider: selectedProvider,
         access_type: 'online',
         prompt: 'login',
         state: signedState,
