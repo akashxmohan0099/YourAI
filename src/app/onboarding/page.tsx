@@ -1,8 +1,9 @@
 'use client'
 
-import { BasicInfoStep } from '@/components/onboarding/basic-info-step'
+import { BusinessStep } from '@/components/onboarding/business-step'
 import { FeaturesStep } from '@/components/onboarding/features-step'
-import { SummaryStep } from '@/components/onboarding/summary-step'
+import { LaunchStep } from '@/components/onboarding/launch-step'
+import { ReviewStep } from '@/components/onboarding/review-step'
 import { TellAiStep } from '@/components/onboarding/tell-ai-step'
 import type { BusinessTypeTemplate, FeatureKey } from '@/lib/onboarding/business-type-templates'
 import { getTemplateById } from '@/lib/onboarding/business-type-templates'
@@ -13,10 +14,11 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const STEPS = [
-  { id: 1, name: 'Basics', description: 'Tell us about your business' },
-  { id: 2, name: 'Features', description: 'What do you need?' },
-  { id: 3, name: 'Teach AI', description: 'Tell our AI about your business' },
-  { id: 4, name: 'Review', description: 'Review and launch' },
+  { id: 1, name: 'Your Business', description: 'Pick your industry' },
+  { id: 2, name: 'Teach AI', description: 'Chat with your assistant' },
+  { id: 3, name: 'Review', description: 'Check & refine details' },
+  { id: 4, name: 'Features', description: 'Choose your tools' },
+  { id: 5, name: 'Launch', description: 'Go live' },
 ]
 
 interface OnboardingProfile {
@@ -77,7 +79,7 @@ export default function OnboardingPage() {
   }, [router, supabase])
 
   const handleNext = () => {
-    if (currentStep < 4) setCurrentStep(currentStep + 1)
+    if (currentStep < 5) setCurrentStep(currentStep + 1)
   }
 
   const handleBack = () => {
@@ -123,10 +125,12 @@ export default function OnboardingPage() {
               <Sparkles className="h-6 w-6 text-[var(--accent)]" />
             </div>
             <div>
-              <p className="kicker">Workspace setup</p>
-              <h1 className="mt-3 text-4xl font-semibold text-[var(--ink)]">Configure the assistant like an operator.</h1>
+              <p className="kicker">Setup</p>
+              <h1 className="mt-3 text-4xl font-semibold text-[var(--ink)]">
+                Let&apos;s get your AI assistant ready.
+              </h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--ink-soft)]">
-                Move through the steps, teach the assistant how your business works, then launch into the dashboard.
+                Pick your industry, chat with your AI, and launch in minutes.
               </p>
             </div>
           </div>
@@ -139,22 +143,22 @@ export default function OnboardingPage() {
         </div>
 
         <div className="panel rounded-[36px] px-5 py-6 sm:px-6 lg:px-8">
-          <div className="mb-8 grid gap-4 md:grid-cols-4">
+          <div className="mb-8 grid gap-2 grid-cols-5">
             {STEPS.map((step) => (
               <div
                 key={step.id}
                 className={cn(
-                  'rounded-[26px] border px-4 py-4 transition-colors',
+                  'rounded-[22px] border px-3 py-3 transition-colors',
                   currentStep === step.id
                     ? 'border-[rgba(43,114,107,0.22)] bg-[rgba(43,114,107,0.08)]'
                     : currentStep > step.id
-                    ? 'border-[rgba(208,109,79,0.18)] bg-[rgba(208,109,79,0.08)]'
-                    : 'border-[var(--line)] bg-white/40'
+                      ? 'border-[rgba(208,109,79,0.18)] bg-[rgba(208,109,79,0.08)]'
+                      : 'border-[var(--line)] bg-white/40'
                 )}
               >
                 <div
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-semibold',
+                    'flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold',
                     currentStep >= step.id
                       ? 'bg-[linear-gradient(135deg,var(--accent),var(--teal))] text-white'
                       : 'bg-white/70 text-[var(--ink-faint)]'
@@ -162,33 +166,27 @@ export default function OnboardingPage() {
                 >
                   {currentStep > step.id ? <Check className="h-4 w-4" /> : step.id}
                 </div>
-                <p className="mt-4 text-sm font-semibold text-[var(--ink)]">{step.name}</p>
-                <p className="mt-1 text-xs leading-6 text-[var(--ink-faint)]">{step.description}</p>
+                <p className="mt-3 text-sm font-semibold text-[var(--ink)]">{step.name}</p>
+                <p className="mt-0.5 hidden text-xs leading-5 text-[var(--ink-faint)] sm:block">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
 
           <div className="rounded-[30px] bg-white/45 px-4 py-5 sm:px-6 sm:py-6">
             {currentStep === 1 && tenantId ? (
-              <BasicInfoStep
+              <BusinessStep
                 tenantId={tenantId}
                 selectedTemplate={selectedTemplate}
                 onTemplateSelect={handleTemplateSelect}
                 onNext={handleNext}
               />
             ) : null}
-            {currentStep === 2 && tenantId ? (
-              <FeaturesStep
-                tenantId={tenantId}
-                selectedFeatures={selectedFeatures}
-                onFeaturesChange={setSelectedFeatures}
-                onNext={handleNext}
-                onBack={handleBack}
-              />
-            ) : null}
-            {/* Keep TellAiStep mounted when on step 4 so chat state survives round-trips */}
-            <div style={{ display: currentStep === 3 ? undefined : 'none' }}>
-              {currentStep >= 3 && tenantId ? (
+
+            {/* Keep TellAiStep mounted when on step 3+ so chat state survives */}
+            <div style={{ display: currentStep === 2 ? undefined : 'none' }}>
+              {currentStep >= 2 && tenantId ? (
                 <TellAiStep
                   tenantId={tenantId}
                   template={selectedTemplate}
@@ -197,10 +195,24 @@ export default function OnboardingPage() {
                 />
               ) : null}
             </div>
+
+            {currentStep === 3 && tenantId ? (
+              <ReviewStep tenantId={tenantId} onNext={handleNext} onBack={handleBack} />
+            ) : null}
+
             {currentStep === 4 && tenantId ? (
-              <SummaryStep
+              <FeaturesStep
                 tenantId={tenantId}
-                template={selectedTemplate}
+                selectedFeatures={selectedFeatures}
+                onFeaturesChange={setSelectedFeatures}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            ) : null}
+
+            {currentStep === 5 && tenantId ? (
+              <LaunchStep
+                tenantId={tenantId}
                 features={selectedFeatures}
                 onComplete={handleComplete}
                 onBack={handleBack}

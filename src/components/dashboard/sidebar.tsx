@@ -3,22 +3,17 @@
 import { cn } from '@/lib/utils'
 import {
   Bot,
-  Building2,
   Calendar,
+  ClipboardList,
   ExternalLink,
-  FileText,
   LayoutDashboard,
+  Mail,
   Megaphone,
   Menu,
-  Newspaper,
-  Radio,
-  Receipt,
-  Settings,
   ShieldCheck,
-  Target,
+  Sparkles,
   Users,
   X,
-  MessageSquare,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -31,42 +26,27 @@ interface SidebarProps {
 
 const navSections = [
   {
-    label: 'Overview',
+    label: null,
     items: [
       { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { name: 'My Business', href: '/my-business', icon: Building2 },
-      { name: 'Conversations', href: '/conversations', icon: MessageSquare },
+      { name: 'Inbox', href: '/inbox', icon: Mail },
+      { name: 'CRM', href: '/crm', icon: Users },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
       { name: 'Schedule', href: '/schedule', icon: Calendar },
-    ],
-  },
-  {
-    label: 'Customers',
-    items: [
-      { name: 'Clients', href: '/clients', icon: Users },
-      { name: 'Leads', href: '/leads', icon: Target },
-    ],
-  },
-  {
-    label: 'Revenue',
-    items: [
-      { name: 'Quotes', href: '/quotes', icon: FileText },
-      { name: 'Invoices', href: '/invoices', icon: Receipt },
+      { name: 'Rostering', href: '/rostering', icon: ClipboardList },
       { name: 'Campaigns', href: '/campaigns', icon: Megaphone },
+      { name: 'Approvals', href: '/approvals', icon: ShieldCheck },
     ],
   },
   {
-    label: 'Automation',
+    label: 'Your AI',
     items: [
       { name: 'AI Assistant', href: '/owner-chat', icon: Bot },
-      { name: 'Briefings', href: '/briefings', icon: Newspaper },
-    ],
-  },
-  {
-    label: 'System',
-    items: [
-      { name: 'Settings', href: '/settings', icon: Settings },
-      { name: 'Channels', href: '/channels', icon: Radio },
-      { name: 'Approvals', href: '/approvals', icon: ShieldCheck },
+      { name: 'Your AI', href: '/your-ai', icon: Sparkles },
     ],
   },
 ]
@@ -94,11 +74,13 @@ export function DashboardSidebar({ tenantName, tenantSlug }: SidebarProps) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        {navSections.map((section) => (
-          <div key={section.label} className="mb-5">
-            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
-              {section.label}
-            </p>
+        {navSections.map((section, sectionIndex) => (
+          <div key={section.label || sectionIndex} className="mb-5">
+            {section.label ? (
+              <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--ink-faint)]">
+                {section.label}
+              </p>
+            ) : null}
             <div className="space-y-1">
               {section.items.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)

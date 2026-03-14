@@ -63,6 +63,7 @@ export interface VapiCall {
     number?: string
     name?: string
   }
+  metadata?: Record<string, unknown>
   createdAt: string
   endedAt?: string
 }

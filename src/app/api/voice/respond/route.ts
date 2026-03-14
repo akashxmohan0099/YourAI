@@ -652,6 +652,13 @@ async function handleEndOfCall(body: VapiServerMessage) {
   const tenantId = await resolveTenantFromChannel('voice', body.message)
   if (!tenantId) return
 
+  // Check if this is an availability check call (rostering)
+  const callMetadata = body.message?.call?.metadata as Record<string, unknown> | undefined
+  if (callMetadata?.type === 'availability_check') {
+    await handleAvailabilityCallEnd(supabase, body, tenantId, callMetadata)
+    return
+  }
+
   const callerNumber = body.message?.call?.customer?.number
 
   // Find or create the conversation
@@ -772,6 +779,97 @@ async function handleEndOfCall(body: VapiServerMessage) {
       console.error('Post-call SMS error:', smsErr)
       // Non-critical — don't fail the end-of-call handling
     }
+  }
+}
+
+// ── availability-check end-of-call ────────────────────────────────────
+// Extract employee availability from the call transcript and save it.
+
+async function handleAvailabilityCallEnd(
+  supabase: SupabaseClient,
+  body: VapiServerMessage,
+  tenantId: string,
+  metadata: Record<string, unknown>
+) {
+  const teamMemberId = metadata.teamMemberId as string | undefined
+  const weekDates = metadata.weekDates as string[] | undefined
+
+  if (!teamMemberId || !weekDates?.length) {
+    console.error('[voice/respond] Availability call missing metadata:', metadata)
+    return
+  }
+
+  // Build transcript
+  const artifactMessages = body.message?.artifact?.messages || body.message?.messages || []
+  const transcript = artifactMessages
+    .filter((m) => m.role === 'user' || m.role === 'assistant' || m.role === 'bot')
+    .map((m) => `${m.role === 'user' ? 'Employee' : 'AI'}: ${m.message}`)
+    .join('\n')
+
+  if (!transcript) {
+    console.log('[voice/respond] Availability call had no transcript')
+    return
+  }
+
+  try {
+    const { generateObject } = await import('ai')
+    const { createAnthropic } = await import('@ai-sdk/anthropic')
+    const { z } = await import('zod')
+
+    const anthropic = createAnthropic()
+
+    const daySlotSchema = z.object({
+      available: z.boolean(),
+      start: z.string().optional().describe('HH:MM 24-hour format, e.g. 09:00'),
+      end: z.string().optional().describe('HH:MM 24-hour format, e.g. 17:00'),
+    })
+
+    const { object } = await generateObject({
+      model: anthropic('claude-sonnet-4-20250514'),
+      schema: z.object({
+        availability: z.record(z.string(), daySlotSchema),
+      }),
+      prompt: `Extract the employee's work availability from this phone call transcript.
+
+The dates to extract are: ${weekDates.join(', ')}
+
+For each date, determine:
+- available: true if they can work that day, false if they can't
+- start: work start time in HH:MM format (24-hour), only if available
+- end: work end time in HH:MM format (24-hour), only if available
+
+Use the exact date strings as keys (e.g. "2026-03-16").
+
+Transcript:
+${transcript}`,
+    })
+
+    // Merge into existing availability
+    const { data: member } = await supabase
+      .from('team_members')
+      .select('availability')
+      .eq('id', teamMemberId)
+      .eq('tenant_id', tenantId)
+      .single()
+
+    if (member) {
+      const existing = (member.availability as Record<string, unknown>) || {}
+      const merged = { ...existing, ...object.availability }
+
+      await supabase
+        .from('team_members')
+        .update({ availability: merged, updated_at: new Date().toISOString() })
+        .eq('id', teamMemberId)
+        .eq('tenant_id', tenantId)
+
+      console.log(
+        `[voice/respond] Saved availability for team member ${teamMemberId}:`,
+        Object.keys(object.availability).length,
+        'days'
+      )
+    }
+  } catch (err) {
+    console.error('[voice/respond] Failed to extract availability:', err)
   }
 }
 

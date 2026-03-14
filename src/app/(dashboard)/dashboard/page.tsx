@@ -1,4 +1,6 @@
+import { BriefingWidget } from '@/components/dashboard/briefing-widget'
 import { PageIntro } from '@/components/dashboard/page-intro'
+import { SetupChecklist } from '@/components/dashboard/setup-checklist'
 import { requireTenant } from '@/lib/auth/guards'
 import { createClient } from '@/lib/supabase/server'
 import {
@@ -32,35 +34,59 @@ export default async function DashboardPage() {
   const hour = today.getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
-  const [conversationsResult, clientsResult, recentConversations, todayAppointments, pendingApprovalsResult] =
-    await Promise.all([
-      supabase
-        .from('conversations')
-        .select('id', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId),
-      supabase
-        .from('clients')
-        .select('id', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId),
-      supabase
-        .from('conversations')
-        .select('*, clients(name), messages(content, role, created_at)')
-        .eq('tenant_id', tenantId)
-        .order('created_at', { ascending: false })
-        .limit(5),
-      supabase
-        .from('appointments')
-        .select('id', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId)
-        .neq('status', 'cancelled')
-        .gte('starts_at', `${todayStr}T00:00:00`)
-        .lte('starts_at', `${todayStr}T23:59:59`),
-      supabase
-        .from('approvals')
-        .select('id', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId)
-        .eq('status', 'pending'),
-    ])
+  const [
+    conversationsResult,
+    clientsResult,
+    recentConversations,
+    todayAppointments,
+    pendingApprovalsResult,
+    configResult,
+    servicesResult,
+    latestBriefingResult,
+  ] = await Promise.all([
+    supabase
+      .from('conversations')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId),
+    supabase
+      .from('clients')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId),
+    supabase
+      .from('conversations')
+      .select('*, clients(name), messages(content, role, created_at)')
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .neq('status', 'cancelled')
+      .gte('starts_at', `${todayStr}T00:00:00`)
+      .lte('starts_at', `${todayStr}T23:59:59`),
+    supabase
+      .from('approvals')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .eq('status', 'pending'),
+    supabase
+      .from('business_config')
+      .select('business_name, description, hours, conversation_style, example_phrases, nylas_grant_id, voice_enabled, vapi_assistant_id, sms_enabled, twilio_phone_number')
+      .eq('tenant_id', tenantId)
+      .single(),
+    supabase
+      .from('services')
+      .select('id', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId),
+    supabase
+      .from('briefings')
+      .select('briefing_date, content')
+      .eq('tenant_id', tenantId)
+      .order('briefing_date', { ascending: false })
+      .limit(1)
+      .single(),
+  ])
 
   const totalConversations = conversationsResult.count || 0
   const totalClients = clientsResult.count || 0
@@ -108,8 +134,8 @@ export default async function DashboardPage() {
         description="Live conversations, schedule, approvals, and recent activity."
         actions={
           <>
-            <Link href="/conversations" className="btn-primary">
-              Open conversations
+            <Link href="/crm" className="btn-primary">
+              Open CRM
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link href="/schedule" className="btn-secondary">
@@ -136,6 +162,11 @@ export default async function DashboardPage() {
         }
       />
 
+      <SetupChecklist
+        config={configResult.data}
+        servicesCount={servicesResult.count || 0}
+      />
+
       <section className="grid gap-4 xl:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.name} className="panel metric-card stat-glow rounded-[30px]">
@@ -160,7 +191,7 @@ export default async function DashboardPage() {
               <p className="kicker">Activity feed</p>
               <h2 className="mt-2 text-2xl font-semibold text-[var(--ink)]">Recent conversations</h2>
             </div>
-            <Link href="/conversations" className="btn-secondary">
+            <Link href="/crm" className="btn-secondary">
               View all
             </Link>
           </div>
@@ -231,6 +262,8 @@ export default async function DashboardPage() {
             </p>
           </div>
 
+          <BriefingWidget latestBriefing={latestBriefingResult.data} />
+
           <div className="panel rounded-[32px] px-6 py-6">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[rgba(43,114,107,0.12)]">
@@ -246,7 +279,7 @@ export default async function DashboardPage() {
                 Approval queue
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/clients" className="btn-secondary w-full justify-between">
+              <Link href="/crm" className="btn-secondary w-full justify-between">
                 Client directory
                 <ArrowRight className="h-4 w-4" />
               </Link>

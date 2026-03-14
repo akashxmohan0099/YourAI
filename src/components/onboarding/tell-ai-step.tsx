@@ -43,36 +43,79 @@ export function TellAiStep({ tenantId, template, onNext, onBack }: TellAiStepPro
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
-  // Load template defaults — only on first mount
+  // Load from DB on mount — Step 1 saves template defaults + scrape data there
   useEffect(() => {
     if (initialized) return
     setInitialized(true)
 
-    if (template) {
-      setExtracted((prev) => ({
-        ...prev,
-        services: template.services.map((s) => ({
-          name: s.name,
-          price: s.priceCents ? `$${(s.priceCents / 100).toFixed(0)}` : 'Quote',
-          duration: s.durationMinutes ? `${s.durationMinutes} min` : '',
-          category: s.category,
-        })),
-        hours: template.defaultHours,
-        faqs: template.faqs,
-        tone: template.suggestedTone,
-      }))
+    async function loadAndInit() {
+      const [configResult, servicesResult] = await Promise.all([
+        supabase
+          .from('business_config')
+          .select('hours, faqs, tone, custom_instructions, description')
+          .eq('tenant_id', tenantId)
+          .single(),
+        supabase
+          .from('services')
+          .select('name, price_cents, price_type, duration_minutes, category')
+          .eq('tenant_id', tenantId)
+          .order('sort_order'),
+      ])
 
-      setMessages([{
-        role: 'assistant',
-        content: `G'day! I've loaded the standard ${template.label} template with ${template.services.length} services, business hours, and common FAQs.\n\nNow tell me about YOUR specific business — what makes you different? For example:\n\n\u2022 What services do you actually offer? (I can add, remove, or adjust the template ones)\n\u2022 What are your real prices?\n\u2022 What hours do you work?\n\u2022 Any rules I should know? (like "never offer discounts" or "always ask for their name")\n\u2022 Anything special about your business?\n\nJust chat naturally \u2014 I'll pick up the details as we go.`
-      }])
-    } else {
-      setMessages([{
-        role: 'assistant',
-        content: `G'day! I'm going to be your business's AI assistant. Tell me about your business so I can help your customers.\n\nWhat do you do? What services do you offer and roughly what do you charge? What hours do you work?\n\nJust chat naturally \u2014 I'll pick up the details as we go.`
-      }])
+      const config = configResult.data
+      const dbServices = servicesResult.data || []
+
+      const loaded: ExtractedData = {
+        services:
+          dbServices.length > 0
+            ? dbServices.map((s: any) => ({
+                name: s.name,
+                price: s.price_cents
+                  ? `$${(s.price_cents / 100).toFixed(0)}${s.price_type === 'starting_at' ? '+' : s.price_type === 'hourly' ? '/hr' : ''}`
+                  : 'Quote',
+                duration: s.duration_minutes ? `${s.duration_minutes} min` : '',
+                category: s.category || '',
+              }))
+            : [],
+        hours: (config?.hours as any) || {},
+        faqs: (config?.faqs as any) || [],
+        tone: (config?.tone as string) || template?.suggestedTone || 'friendly',
+        customInstructions: (config?.custom_instructions as string) || '',
+        description: (config?.description as string) || '',
+      }
+
+      setExtracted(loaded)
+
+      // Build greeting based on what we know
+      const serviceCount = loaded.services.length
+      const hasHours = Object.values(loaded.hours).some((h) => h !== null)
+      const hasFaqs = loaded.faqs.length > 0
+
+      const knownParts = [
+        serviceCount > 0 ? `${serviceCount} services` : null,
+        hasHours ? 'business hours' : null,
+        hasFaqs ? `${loaded.faqs.length} FAQs` : null,
+      ].filter(Boolean)
+
+      if (knownParts.length > 0) {
+        setMessages([
+          {
+            role: 'assistant',
+            content: `G'day! I've loaded ${knownParts.join(', ')} from your setup so far.\n\nNow tell me about YOUR business — what makes you different? For example:\n\n\u2022 Are these services and prices right? I can adjust anything.\n\u2022 Any rules I should follow? (like "never offer discounts")\n\u2022 How should I talk to your customers — formal, casual, friendly?\n\u2022 What's special about your business?\n\nJust chat naturally — I'll pick up the details.`,
+          },
+        ])
+      } else {
+        setMessages([
+          {
+            role: 'assistant',
+            content: `G'day! I'm going to be your business's AI assistant. Tell me about your business so I can help your customers.\n\nWhat do you do? What services do you offer and roughly what do you charge?\n\nJust chat naturally — I'll pick up the details as we go.`,
+          },
+        ])
+      }
     }
-  }, [template, initialized])
+
+    loadAndInit()
+  }, [tenantId, template, initialized, supabase])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })

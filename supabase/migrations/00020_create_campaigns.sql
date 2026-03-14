@@ -12,11 +12,12 @@ create table if not exists public.campaigns (
   updated_at timestamptz default now()
 );
 
-create index idx_campaigns_tenant on public.campaigns(tenant_id);
-create index idx_campaigns_status on public.campaigns(tenant_id, status);
+create index if not exists idx_campaigns_tenant on public.campaigns(tenant_id);
+create index if not exists idx_campaigns_status on public.campaigns(tenant_id, status);
 
 alter table public.campaigns enable row level security;
 
+drop policy if exists "Tenant isolation for campaigns" on public.campaigns;
 create policy "Tenant isolation for campaigns"
   on public.campaigns for all
   using (tenant_id = public.get_user_tenant_id())
@@ -36,12 +37,13 @@ create table if not exists public.campaign_sends (
   created_at timestamptz default now()
 );
 
-create index idx_campaign_sends_campaign on public.campaign_sends(campaign_id);
-create index idx_campaign_sends_tenant on public.campaign_sends(tenant_id);
-create index idx_campaign_sends_status on public.campaign_sends(campaign_id, status);
+create index if not exists idx_campaign_sends_campaign on public.campaign_sends(campaign_id);
+create index if not exists idx_campaign_sends_tenant on public.campaign_sends(tenant_id);
+create index if not exists idx_campaign_sends_status on public.campaign_sends(campaign_id, status);
 
 alter table public.campaign_sends enable row level security;
 
+drop policy if exists "Tenant isolation for campaign_sends" on public.campaign_sends;
 create policy "Tenant isolation for campaign_sends"
   on public.campaign_sends for all
   using (tenant_id = public.get_user_tenant_id())

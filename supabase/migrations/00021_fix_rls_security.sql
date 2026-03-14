@@ -4,6 +4,7 @@ drop policy if exists "Users can update their own profile" on public.user_profil
 
 -- New policy: users can update their own profile but NOT the role column
 -- We use a column-level approach: create a restrictive policy
+drop policy if exists "Users can update own profile (not role)" on public.user_profiles;
 create policy "Users can update own profile (not role)"
   on public.user_profiles for update
   using (auth_user_id = auth.uid())
@@ -28,6 +29,7 @@ as $$
   limit 1;
 $$;
 
+drop policy if exists "Owners and admins can update business config" on public.business_config;
 create policy "Owners and admins can update business config"
   on public.business_config for update
   using (
@@ -38,6 +40,7 @@ create policy "Owners and admins can update business config"
 -- Fix 3: Only owners can update tenant details
 drop policy if exists "Owners can update their tenant" on public.tenants;
 
+drop policy if exists "Only owners can update tenant" on public.tenants;
 create policy "Only owners can update tenant"
   on public.tenants for update
   using (
@@ -50,6 +53,7 @@ drop policy if exists "Anyone can view active services by tenant" on public.serv
 
 -- Public chat needs to read services, so we allow select for the tenant
 -- but the public chat uses service-role which bypasses RLS anyway
+drop policy if exists "Users can view services in their tenant" on public.services;
 create policy "Users can view services in their tenant"
   on public.services for select
   using (tenant_id = public.get_user_tenant_id());
